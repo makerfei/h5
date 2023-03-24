@@ -16,7 +16,7 @@ import ICON_ART from '@/assets/images/icon_art.png';
 
 import { useUserStore } from '@/store/modules/user';
 import { usePage } from '@/hooks/shared/usePage';
-
+const userStore = useUserStore();
 onMounted(() => {
   if (unref(hasLogin)) {
     userStore.getUserDetail();
@@ -24,7 +24,7 @@ onMounted(() => {
   }
 });
 
-const userStore = useUserStore();
+
 const { hasLogin, goLogin, goPage } = usePage();
 
 // 统计
