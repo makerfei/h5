@@ -4,9 +4,9 @@ import qs from 'qs';
 import { Toast } from 'vant';
 import { getAPI } from '@/utils';
 import { ServiceResult } from './types';
-
+import { router } from '@/router';
 import { useUserStoreWithOut } from '@/store/modules/user';
-
+import storage from 'good-storage';
 function createRequest<T = ServiceResult>(config: AxiosRequestConfig): Promise<T> {
   /**
    * 创建 axios 实例
@@ -51,7 +51,10 @@ function createRequest<T = ServiceResult>(config: AxiosRequestConfig): Promise<T
       if (Number(code) === 0) {
         return result;
       } else if (Number(code) === 700) {
-        result.data = null;
+      } else if (Number(code) === -999) {
+        storage.set('token', '');
+        storage.set('userInfo', {});
+        router.push('/login');
         return result;
       } else {
         serviceErrorHandel(result);
