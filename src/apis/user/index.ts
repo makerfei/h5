@@ -71,7 +71,7 @@ export function userMBindMobile(data?: Recordable) {
  */
 export function userMLogin(data?: Recordable) {
   return request({
-    url: `/user/m/login`,
+    url: `/login`,
     method: 'post',
     data,
   });
@@ -82,7 +82,7 @@ export function userMLogin(data?: Recordable) {
  */
 export function userMLoginMobile(data?: Recordable) {
   return request({
-    url: `/user/m/loginMobile`,
+    url: `/loginMobile`,
     method: 'post',
     data,
   });
@@ -93,7 +93,8 @@ export function userMLoginMobile(data?: Recordable) {
  */
 export function userMRegister(data?: Recordable) {
   return request({
-    url: `/user/m/register`,
+    //url: `/user/m/register`,
+    url: `/register`,
     method: 'post',
     data,
   });

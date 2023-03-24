@@ -52,11 +52,11 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       host: true,
       port: Number(env.VITE_PORT),
       proxy: {
-        '/dev-api': {
-          target: 'https://api.it120.cc/xiaochengxu',
+        '/api': {
+          target: 'http://127.0.0.1',
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/dev-api/, ''),
+         // rewrite: (path) => path.replace(/^\/dev-api/, ''),
         },
       },
     },
