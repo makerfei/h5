@@ -126,6 +126,7 @@ export default {
         provinceId: this.form.provinceCode,
         cityId: this.form.cityCode,
         districtId: this.form.countyCode,
+        areaStr:this.form.areaStr,
       };
 
       this.$toast.loading({
