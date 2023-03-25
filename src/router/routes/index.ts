@@ -25,6 +25,7 @@ const routes = [
     component: () => import('@/views/cart/index.vue'),
     meta: {
       title: '购物车',
+      keepAlive:false
     },
   },
   {
@@ -42,6 +43,7 @@ const routes = [
     component: () => import('@/views/login/index.vue'),
     meta: {
       title: '登录',
+      keepAlive:false
     },
   },
   {
@@ -50,6 +52,7 @@ const routes = [
     component: () => import('@/views/register/index.vue'),
     meta: {
       title: '注册',
+      keepAlive:false
     },
   },
   {
@@ -58,6 +61,7 @@ const routes = [
     component: () => import('@/views/resetPwd/index.vue'),
     meta: {
       title: '重置密码',
+      keepAlive:false
     },
   },
   {
@@ -67,6 +71,7 @@ const routes = [
     meta: {
       title: '订单列表',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -76,6 +81,7 @@ const routes = [
     meta: {
       title: '订单详情',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -85,6 +91,7 @@ const routes = [
     meta: {
       title: '提交订单',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -94,6 +101,7 @@ const routes = [
     meta: {
       title: '支付结果',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -103,6 +111,7 @@ const routes = [
     meta: {
       title: '退款/售后',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -112,6 +121,7 @@ const routes = [
     meta: {
       title: '申请售后',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -121,6 +131,7 @@ const routes = [
     meta: {
       title: '我的优惠券',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -130,6 +141,7 @@ const routes = [
     meta: {
       title: '积分中心',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -139,6 +151,7 @@ const routes = [
     meta: {
       title: '积分规则',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -148,6 +161,7 @@ const routes = [
     meta: {
       title: '积分明细',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -157,6 +171,7 @@ const routes = [
     meta: {
       title: '积分兑换',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -166,6 +181,7 @@ const routes = [
     meta: {
       title: '我的钱包（资产）',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -175,6 +191,7 @@ const routes = [
     meta: {
       title: '资金记录',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -184,6 +201,7 @@ const routes = [
     meta: {
       title: '收货地址',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -193,6 +211,7 @@ const routes = [
     meta: {
       title: '编辑收货地址',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -201,6 +220,7 @@ const routes = [
     component: () => import('@/views/good/detail.vue'),
     meta: {
       title: '商品详情',
+      keepAlive:false
     },
   },
   {
@@ -209,6 +229,7 @@ const routes = [
     component: () => import('@/views/good/reputation.vue'),
     meta: {
       title: '全部评价',
+      keepAlive:false
     },
   },
   {
@@ -218,6 +239,7 @@ const routes = [
     meta: {
       title: '设置',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
@@ -227,6 +249,7 @@ const routes = [
     meta: {
       title: '编辑资料',
       needLogin: true,
+      keepAlive:false
     },
   },
   {
