@@ -11,7 +11,6 @@ import { assets } from '@/constants';
 import AreaField from '@/components/AreaField/index.vue';
 
 import { useUserStore } from '@/store/modules/user';
-
 onMounted(() => {
   avatarUrl.value = unref(userInfo).avatarUrl ?? '';
   nick.value = unref(userInfo).nick ?? '';
@@ -83,7 +82,11 @@ function onSubmit() {
 
   API_USER.userModify(params)
     .then(() => {
+      //userStore.getUserDetail();
       Toast('资料修改成功');
+
+
+
       router.back();
     })
     .catch((error) => {

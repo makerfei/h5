@@ -189,6 +189,9 @@ function onSubmit() {
                 muted
                 loop
                 type="video/mp4"
+                x5-video-player-type="h5-page" 
+                webkit-playsinline="true"
+                 playsinline="true"  
               ></video>
               <span>购物车</span>
             </div>

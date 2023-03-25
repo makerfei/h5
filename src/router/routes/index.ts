@@ -33,6 +33,7 @@ const routes = [
     component: () => import('@/views/mine/index.vue'),
     meta: {
       title: '我的',
+      keepAlive:false
     },
   },
   {
