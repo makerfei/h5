@@ -10,8 +10,12 @@ export function rate2Reputation(val: number) {
     case 0:
       return 1;
     case 1:
-      return 3;
+      return 2;
     case 2:
+      return 3;
+    case 3:
+      return 4;
+    case 4:
       return 5;
     default:
       return 5;
@@ -29,13 +33,13 @@ export function reputation2Rate(val: number) {
     case 2:
       return 1;
     case 3:
-      return 1;
+      return 2;
     case 4:
-      return 2;
+      return 3;
     case 5:
-      return 2;
+      return 4;
     default:
-      return 2;
+      return 4;
   }
 }
 
