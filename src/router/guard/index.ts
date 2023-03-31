@@ -1,8 +1,9 @@
 import { router } from '@/router';
 import { getDevicePlatform } from '@/utils';
 import deviceModel from '@/utils/helpers/deviceModel';
-import { useUserStoreWithOut } from '@/store/modules/user';
+import { useUserStoreWithOut,useUserStore } from '@/store/modules/user';
 import { useAppStoreWithOut } from '@/store/modules/app';
+import {  } from '@/store/modules/user';
 
 let appLoadedFlag: boolean; // 应用窗口加载标记
 
@@ -13,6 +14,8 @@ router.beforeEach(async (to, from, next) => {
   if (title) {
     document.title = title;
   }
+
+ 
 
   // 应用窗口加载
   if (!appLoadedFlag) {
@@ -45,6 +48,13 @@ router.beforeEach(async (to, from, next) => {
 
   const userStore = useUserStoreWithOut();
   const token = userStore.getToken;
+
+
+ //微信获取openIds
+ if (to.query && to.query.code) {
+  await userStore.wxLogin({code:to.query.code,state:to.query.state})
+ }
+  
 
   // 需要登录
   if (to.meta.needLogin && !token) {

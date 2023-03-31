@@ -3,6 +3,7 @@ import { store } from '@/store';
 import storage from 'good-storage';
 import { router } from '@/router';
 import API_USER from '@/apis/user';
+import API_wx from '@/apis/wx';
 import { loginProviderType } from '@/constants/modules/user';
 
 export interface UserInfo {
@@ -36,6 +37,23 @@ export const useUserStore = defineStore({
     getUserLevel: (state): UserLevel => state.userLevel,
   },
   actions: {
+
+
+    async wxLogin(payload: Recordable = {}) {
+      const {  params } = payload;
+      try {
+        if(this.token) return;
+        const wxLoginRes = await API_wx.wxLogin(params) ;
+        if(wxLoginRes.data.token){
+          this.token = wxLoginRes.data.token;
+          storage.set('token', wxLoginRes.data.token);
+        }
+        return wxLoginRes.data;
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    },
+
     async login(payload: Recordable = {}) {
       const { provider = 'system', params } = payload;
 
