@@ -40,10 +40,9 @@ export const useUserStore = defineStore({
 
 
     async wxLogin(payload: Recordable = {}) {
-      const {  params } = payload;
       try {
         if(this.token) return;
-        const wxLoginRes = await API_wx.wxLogin(params) ;
+        const wxLoginRes = await API_wx.wxLogin(payload) ;
         if(wxLoginRes.data.token){
           this.token = wxLoginRes.data.token;
           storage.set('token', wxLoginRes.data.token);
