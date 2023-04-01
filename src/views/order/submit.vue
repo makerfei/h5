@@ -59,7 +59,7 @@ function getAddressInfo() {
 
 // 钱包
 const balance = ref<number>(0);
-const balanceSwitch = ref<boolean>(true);
+const balanceSwitch = ref<string>('');
 function getUserAmount() {
   API_USER.userAmount().then((res) => {
     balance.value = res.data?.balance ?? 0;
@@ -89,19 +89,25 @@ function onSubmit() {
     Toast({ message: '地址栏不能为空', duration: 1500 });
     return;
   }
-
-  if (unref(balance) < unref(totalPrice)) {
-    Dialog.confirm({
-      title: '余额不足',
-      message: '积分兑换成余额，再来消费',
-      confirmButtonText: '我知道了',
-    })
-      .then(() => {})
-      .catch(() => {
-        // on cancel
-      });
+  if (!unref(balanceSwitch)) {
+    Toast({ message: '请选择支付方式', duration: 1500 });
     return;
   }
+  if (unref(balanceSwitch) == '1') {
+    if (unref(balance) < unref(totalPrice)) {
+      Dialog.confirm({
+        title: '余额不足',
+        message: '积分兑换成余额，再来消费',
+        confirmButtonText: '我知道了',
+      })
+        .then(() => { })
+        .catch(() => {
+          // on cancel
+        });
+      return;
+    }
+  }
+
 
   createOrder();
 }
@@ -122,6 +128,7 @@ async function createOrder() {
     goodsJsonStr: JSON.stringify(goods), // 购买的商品信息的数组
     expireMinutes: unref(orderSetInfo).closeMinute || 60, // 多少分钟未支付自动关闭本订单，传0不自动关闭订单
     remark: unref(remark),
+    balanceSwitch: unref(balanceSwitch)
   };
 
   if (unref(isNeedLogistics)) {
@@ -142,16 +149,18 @@ async function createOrder() {
     duration: 0,
   });
   submitLoading.value = true;
-
   try {
+
     const res = await API_ORDER.orderCreate(params);
 
     if (unref(tradeGoods).origin === 'cart') {
       cartEmptyHandle();
     }
-
-    await payOrder(res.data.id);
-
+    if (unref(balanceSwitch) === '1') {
+      await payOrder(res.data.id);
+    } else {
+      await wxPayOrder(res.data.id);
+    }
     Toast.clear();
     submitLoading.value = false;
     router.replace({
@@ -160,6 +169,8 @@ async function createOrder() {
         orderNumber: res.data.orderNumber,
       },
     });
+
+
   } catch (error) {
     Toast.clear();
     submitLoading.value = false;
@@ -173,13 +184,19 @@ async function createOrder() {
 function payOrder(orderId: number) {
   return API_ORDER.orderPay({ orderId });
 }
+function wxPayOrder(orderId: number) {
+  return API_ORDER.wxOrderPay({ orderId });
+}
+
+
+
 
 /**
  * 下单商品购物车来源时，直接清空购物车（ TODO: 考虑是否选中）
  */
 function cartEmptyHandle() {
   API_CART.shoppingCartEmpty()
-    .then(() => {})
+    .then(() => { })
     .catch((error) => {
       console.log(error);
     });
@@ -198,14 +215,8 @@ function cartEmptyHandle() {
         <div class="address-sub van-ellipsis">{{ addressInfo.linkMan }} {{ mobileShow(addressInfo.mobile) }}</div>
         <van-icon class="address-arrow" name="arrow" />
       </div>
-      <van-cell
-        v-else
-        class="address-card mb10"
-        title="新增收货地址"
-        icon="add-square"
-        is-link
-        @click="onAddressClicked"
-      ></van-cell>
+      <van-cell v-else class="address-card mb10" title="新增收货地址" icon="add-square" is-link
+        @click="onAddressClicked"></van-cell>
       <van-cell title="配送方式" value="快递"></van-cell>
       <SelectAddress v-model="addressPopupShow" @select="onAddressSelected" />
     </div>
@@ -229,27 +240,29 @@ function cartEmptyHandle() {
     </div>
     <!-- 备注 -->
     <div class="section">
-      <van-field
-        v-model="remark"
-        label="买家留言"
-        type="textarea"
-        placeholder="留言建议提前协商（250字以内）"
-        maxlength="250"
-        rows="1"
-        autosize
-      />
+      <van-field v-model="remark" label="买家留言" type="textarea" placeholder="留言建议提前协商（250字以内）" maxlength="250" rows="1"
+        autosize />
     </div>
     <!-- 付款方式 默认钱包支付-->
     <div class="section">
       <div class="section-header van-hairline--bottom">
         <span class="section-header-title">付款方式</span>
       </div>
-      <van-cell title="余额" center>
-        <template #label> 账户余额：{{ decimalFormat(balance) }} </template>
-        <template #right-icon>
-          <van-checkbox :model-value="balanceSwitch"> </van-checkbox>
-        </template>
-      </van-cell>
+
+      <van-radio-group v-model="balanceSwitch">
+        <van-cell title="余额" center>
+          <template #label> 账户余额：{{ decimalFormat(balance) }} </template>
+          <template #right-icon>
+            <van-radio name="1"></van-radio>
+          </template>
+        </van-cell>
+        <van-cell title="微信支付" center>
+          <template #label></template>
+          <template #right-icon>
+            <van-radio name="2"></van-radio>
+          </template>
+        </van-cell>
+      </van-radio-group>
     </div>
     <!--提交订单栏 -->
     <div class="submit-bar-wrap">
@@ -317,6 +330,7 @@ function cartEmptyHandle() {
 
   &-price {
     color: var(--brand-color);
+
     &-symbol {
       font-size: 12px;
       margin-right: 2px;
@@ -418,28 +432,24 @@ function cartEmptyHandle() {
     bottom: 0;
     left: 0;
     height: 2px;
-    background: -webkit-repeating-linear-gradient(
-      135deg,
-      #ff6c6c 0,
-      #ff6c6c 20%,
-      transparent 0,
-      transparent 25%,
-      #1989fa 0,
-      #1989fa 45%,
-      transparent 0,
-      transparent 50%
-    );
-    background: repeating-linear-gradient(
-      -45deg,
-      #ff6c6c 0,
-      #ff6c6c 20%,
-      transparent 0,
-      transparent 25%,
-      #1989fa 0,
-      #1989fa 45%,
-      transparent 0,
-      transparent 50%
-    );
+    background: -webkit-repeating-linear-gradient(135deg,
+        #ff6c6c 0,
+        #ff6c6c 20%,
+        transparent 0,
+        transparent 25%,
+        #1989fa 0,
+        #1989fa 45%,
+        transparent 0,
+        transparent 50%);
+    background: repeating-linear-gradient(-45deg,
+        #ff6c6c 0,
+        #ff6c6c 20%,
+        transparent 0,
+        transparent 25%,
+        #1989fa 0,
+        #1989fa 45%,
+        transparent 0,
+        transparent 50%);
     background-size: 80px;
     content: '';
   }
@@ -449,42 +459,41 @@ function cartEmptyHandle() {
   position: relative;
   padding: 10px 15px;
   align-items: center;
+
   &:before {
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
     height: 2px;
-    background: -webkit-repeating-linear-gradient(
-      135deg,
-      #ff6c6c 0,
-      #ff6c6c 20%,
-      transparent 0,
-      transparent 25%,
-      #1989fa 0,
-      #1989fa 45%,
-      transparent 0,
-      transparent 50%
-    );
-    background: repeating-linear-gradient(
-      -45deg,
-      #ff6c6c 0,
-      #ff6c6c 20%,
-      transparent 0,
-      transparent 25%,
-      #1989fa 0,
-      #1989fa 45%,
-      transparent 0,
-      transparent 50%
-    );
+    background: -webkit-repeating-linear-gradient(135deg,
+        #ff6c6c 0,
+        #ff6c6c 20%,
+        transparent 0,
+        transparent 25%,
+        #1989fa 0,
+        #1989fa 45%,
+        transparent 0,
+        transparent 50%);
+    background: repeating-linear-gradient(-45deg,
+        #ff6c6c 0,
+        #ff6c6c 20%,
+        transparent 0,
+        transparent 25%,
+        #1989fa 0,
+        #1989fa 45%,
+        transparent 0,
+        transparent 50%);
     background-size: 80px;
     content: '';
   }
 }
+
 .address-card :deep(.van-cell__left-icon) {
   color: #1989fa;
   font-size: 40px;
 }
+
 .address-card :deep(.van-cell__title) {
   line-height: 40px;
 }
