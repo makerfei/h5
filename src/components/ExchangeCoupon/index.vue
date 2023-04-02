@@ -77,7 +77,7 @@ function onSubmit() {
         v-model="code"
         clearable
         :border="false"
-        placeholder="请输入口令（例如v-shop，2022）"
+        placeholder="请输入口令（例如mgdg，2022）"
         class="exchange-field"
         type="text"
       >

@@ -2,8 +2,8 @@
  * app
  */
 export const app = {
-  name: 'v-shop',
-  link: 'https://github.com/JoeshuTT/v-shop/',
+  name: 'mgdg',
+  link: 'https://mgdg.shop',
 };
 
 export interface ITheme {
@@ -31,7 +31,10 @@ export const theme: ITheme = {
     viceTextColor: '#1ba784',
     black: '#000',
     white: '#fff',
-  },
+  }
+
+
+
 };
 
 export interface ITabBar {
@@ -137,7 +140,7 @@ export const palettes = [
   },
   {
     value: '#ee0a24',
-    label: '红色系列（Vant 默认主色）',
+    label: '红色系列',
     colors: {
       brandColor: '#ee0a24',
       viceColor: '#ffd01e',
@@ -146,7 +149,7 @@ export const palettes = [
   },
   {
     value: '#1ba784',
-    label: '绿色系列（v-shop 默认色系列）',
+    label: '绿色系列',
     link: 'http://zhongguose.com/', // 取自中国色 竹绿
     colors: {
       brandColor: '#1ba784',

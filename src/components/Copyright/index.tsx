@@ -10,12 +10,12 @@ export default defineComponent({
       return (
         <div class={styles.copyright}>
           <div class={styles.copyrightP}>
-            <a href="https://github.com/JoeshuTT/v-shop" target="_blank">
+            <a target="_blank">
               Copyright © 2019-{nowYear} {__APP_INFO__.pkg.name} | v{__APP_INFO__.pkg.version}
             </a>
           </div>
           <div class={styles.copyrightP}>
-            <a href="https://github.com/JoeshuTT/v-shop" target="_blank">
+            <a  target="_blank">
               最后发布时间： {__APP_INFO__.lastBuildTime}
             </a>
           </div>
