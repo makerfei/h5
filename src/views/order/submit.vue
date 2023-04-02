@@ -93,6 +93,7 @@ function onSubmit() {
     Toast({ message: '请选择支付方式', duration: 1500 });
     return;
   }
+  
   if (unref(balanceSwitch) == '1') {
     if (unref(balance) < unref(totalPrice)) {
       Dialog.confirm({
