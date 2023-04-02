@@ -161,8 +161,9 @@ async function createOrder() {
     if (unref(balanceSwitch) === '2') {
       canPay = await wxPayApi(res.data.wxpayInfo)
     }
-    canPay && await payOrder(res.data.orderData.id);
-
+    if (canPay) {
+      await payOrder(res.data.orderData.id);
+    }
     Toast.clear();
     submitLoading.value = false;
     router.replace({

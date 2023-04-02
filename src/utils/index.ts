@@ -16,8 +16,9 @@ export function wxPayApi(data: any): any {
 
   return new Promise<void>((resolve: any, reject: any) => {
     let { appId, nonceStr, timeStamp, paySign, signType, packageData } = data;
+   
     wx.config({
-      debug: true, // 测试阶段可用 true 打包返回给后台用 false
+      debug: false, // 测试阶段可用 true 打包返回给后台用 false
       appId: appId,
       timestamp: timeStamp,
       nonceStr: nonceStr,
@@ -36,10 +37,10 @@ export function wxPayApi(data: any): any {
           resolve(true)
         },
         cancel: function () {
-          reject(false)
+          resolve(false)
         },
         fail: function () {
-          reject(false)
+          resolve(false)
         }
       });
     });
