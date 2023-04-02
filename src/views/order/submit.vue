@@ -13,11 +13,12 @@ import API_USER from '@/apis/user';
 import API_ORDER from '@/apis/order';
 import API_CART from '@/apis/cart';
 import { decimalFormat, mobileShow } from '@/utils/format';
+import { wxPayApi} from '@/utils/index';
 import SelectAddress from './components/SelectAddress.vue';
 import GoodCard from '@/components/GoodCard/index.vue';
 
 import { useOrderStore } from '@/store/modules/order';
-import wx from 'weixin-js-sdk'
+
 onMounted(() => {
   if (unref(isNeedLogistics)) {
     getAddressInfo();
@@ -153,49 +154,17 @@ async function createOrder() {
   try {
 
     const res = await API_ORDER.orderCreate(params);
-
     if (unref(tradeGoods).origin === 'cart') {
       cartEmptyHandle();
     }
-
-
-    if (unref(balanceSwitch) === '1') {
-      await payOrder(res.data.orderData.id);
-    } else {
-
-      await new Promise<void>((resolve, reject) => {
-        let { appId, nonceStr, timeStamp, paySign, signType, packageData } = res.data.wxpayInfo;
-
-        wx.config({
-          debug: true, // 测试阶段可用 true 打包返回给后台用 false
-          appId: appId,
-          timestamp: timeStamp,
-          nonceStr: nonceStr,
-          signature: paySign,
-          jsApiList: ['chooseWXPay']
-        });
-        wx.ready(function () {
-          wx.chooseWXPay({
-            appId: appId,
-            timestamp: timeStamp, // 时间戳
-            nonceStr: nonceStr, // 随机字符串
-            package: packageData, // 统一支付接口返回的prepay_id参数值
-            signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-            paySign: paySign, // 支付签名
-            success: async function () {
-              await payOrder(res.data.orderData.id);
-              resolve()
-            },
-            cancel: function () {
-              reject()
-            },
-            fail: function () {
-              reject()
-            }
-          });
-        });
+    if (unref(balanceSwitch) === '2') {
+      await wxPayApi( res.data.wxpayInfo).then(async()=>{
+        await payOrder(res.data.orderData.id);
       })
+    } else {
+      await payOrder(res.data.orderData.id);
     }
+
 
     Toast.clear();
     submitLoading.value = false;

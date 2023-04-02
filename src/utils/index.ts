@@ -1,5 +1,5 @@
 export { throttle, debounce, deepClone } from './lodash';
-
+import wx from 'weixin-js-sdk'
 /**
  * 获取链接某个参数
  * @param {string} key 参数名称
@@ -9,6 +9,45 @@ export { throttle, debounce, deepClone } from './lodash';
  * getQueryString('name');
  * getQueryString('name', 'http://www.baidu.com?name=1&age=2');
  */
+
+
+
+export function wxPayApi(data:any): any {
+  new Promise<void>((resolve, reject) => {
+    let { appId, nonceStr, timeStamp, paySign, signType, packageData } =data;
+
+    wx.config({
+      debug: true, // 测试阶段可用 true 打包返回给后台用 false
+      appId: appId,
+      timestamp: timeStamp,
+      nonceStr: nonceStr,
+      signature: paySign,
+      jsApiList: ['chooseWXPay']
+    });
+    wx.ready(function () {
+      wx.chooseWXPay({
+        appId: appId,
+        timestamp: timeStamp, // 时间戳
+        nonceStr: nonceStr, // 随机字符串
+        package: packageData, // 统一支付接口返回的prepay_id参数值
+        signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+        paySign: paySign, // 支付签名
+        success: async function () {
+          resolve()
+        },
+        cancel: function () {
+          reject()
+        },
+        fail: function () {
+          reject()
+        }
+      });
+    });
+  })
+}
+
+
+
 export function getQueryString(key: string, url: string): string {
   const reg = new RegExp(`([?&]+)${key}=([^&#]*)`);
   const href = url || window.location.href;
