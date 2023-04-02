@@ -17,7 +17,7 @@ import SelectAddress from './components/SelectAddress.vue';
 import GoodCard from '@/components/GoodCard/index.vue';
 
 import { useOrderStore } from '@/store/modules/order';
-
+import wx from 'weixin-js-sdk'
 onMounted(() => {
   if (unref(isNeedLogistics)) {
     getAddressInfo();
@@ -156,11 +156,48 @@ async function createOrder() {
     if (unref(tradeGoods).origin === 'cart') {
       cartEmptyHandle();
     }
+
+
     if (unref(balanceSwitch) === '1') {
-      await payOrder(res.data.id);
+      await payOrder(res.data.orderData.id);
     } else {
-      await wxPayOrder(res.data.id);
+
+
+      let { appId, nonceStr, timeStamp, paySign, signType, packageData } = res.data.wxpayInfo;
+
+      wx.config({
+        debug: true, // 测试阶段可用 true 打包返回给后台用 false
+        appId: appId,
+        timestamp: timeStamp,
+        nonceStr: nonceStr,
+        signature: paySign,
+        jsApiList: ['chooseWXPay']
+      });
+      wx.ready(function () {
+        wx.chooseWXPay({
+          appId: appId,
+          timestamp: timeStamp, // 时间戳
+          nonceStr: nonceStr, // 随机字符串
+          package: packageData, // 统一支付接口返回的prepay_id参数值
+          signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+          paySign: paySign, // 支付签名
+          success: function (res: any) {
+            alert(res)
+          },
+          cancel: function (res: any) {
+            alert(res)
+          },
+          fail: function (res: any) {
+            alert(res)
+          }
+        });
+      });
     }
+
+
+
+
+
     Toast.clear();
     submitLoading.value = false;
     router.replace({
