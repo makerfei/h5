@@ -93,7 +93,7 @@ function onSubmit() {
     Toast({ message: '请选择支付方式', duration: 1500 });
     return;
   }
-  
+
   if (unref(balanceSwitch) == '1') {
     if (unref(balance) < unref(totalPrice)) {
       Dialog.confirm({
@@ -163,48 +163,46 @@ async function createOrder() {
       await payOrder(res.data.orderData.id);
     } else {
 
+      await new Promise<void>((resolve, reject) => {
+        let { appId, nonceStr, timeStamp, paySign, signType, packageData } = res.data.wxpayInfo;
 
-      let { appId, nonceStr, timeStamp, paySign, signType, packageData } = res.data.wxpayInfo;
-
-      wx.config({
-        debug: true, // 测试阶段可用 true 打包返回给后台用 false
-        appId: appId,
-        timestamp: timeStamp,
-        nonceStr: nonceStr,
-        signature: paySign,
-        jsApiList: ['chooseWXPay']
-      });
-      wx.ready(function () {
-        wx.chooseWXPay({
+        wx.config({
+          debug: true, // 测试阶段可用 true 打包返回给后台用 false
           appId: appId,
-          timestamp: timeStamp, // 时间戳
-          nonceStr: nonceStr, // 随机字符串
-          package: packageData, // 统一支付接口返回的prepay_id参数值
-          signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-          paySign: paySign, // 支付签名
-          success: function (res: any) {
-            alert(res)
-          },
-          cancel: function (res: any) {
-            alert(res)
-          },
-          fail: function (res: any) {
-            alert(res)
-          }
+          timestamp: timeStamp,
+          nonceStr: nonceStr,
+          signature: paySign,
+          jsApiList: ['chooseWXPay']
         });
-      });
+        wx.ready(function () {
+          wx.chooseWXPay({
+            appId: appId,
+            timestamp: timeStamp, // 时间戳
+            nonceStr: nonceStr, // 随机字符串
+            package: packageData, // 统一支付接口返回的prepay_id参数值
+            signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+            paySign: paySign, // 支付签名
+            success: async function () {
+              await payOrder(res.data.orderData.id);
+              resolve()
+            },
+            cancel: function () {
+              reject()
+            },
+            fail: function () {
+              reject()
+            }
+          });
+        });
+      })
     }
-
-
-
-
 
     Toast.clear();
     submitLoading.value = false;
     router.replace({
       path: '/order/payResult',
       query: {
-        orderNumber: res.data.orderNumber,
+        orderNumber: res.data.orderData.orderNumber,
       },
     });
 
@@ -222,11 +220,6 @@ async function createOrder() {
 function payOrder(orderId: number) {
   return API_ORDER.orderPay({ orderId });
 }
-function wxPayOrder(orderId: number) {
-  return API_ORDER.wxOrderPay({ orderId });
-}
-
-
 
 
 /**

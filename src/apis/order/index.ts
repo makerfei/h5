@@ -88,16 +88,7 @@ export function orderPay(data?: Recordable) {
   });
 }
 
-/**
- * 微信支付
- */
-export function wxOrderPay(data?: Recordable) {
-  return request({
-    url: `/order/wxPay`,
-    method: 'post',
-    data,
-  });
-}
+
 
 /**
  * 获取订单退款记录
@@ -196,7 +187,6 @@ export default {
   orderDetail,
   orderList,
   orderPay,
-  wxOrderPay,
   orderRefund,
   orderRefundApplyApply,
   orderRefundApplyCancel,

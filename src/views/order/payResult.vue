@@ -19,6 +19,7 @@ const router = useRouter();
 const route = useRoute();
 
 const orderInfo = ref<Recordable>({});
+const hasland = ref<boolean>(false)
 
 function goOrder() {
   router.replace({
@@ -36,9 +37,11 @@ function getDetail() {
   API_ORDER.orderDetail({ orderNumber: route.query.orderNumber })
     .then((res) => {
       orderInfo.value = res.data?.orderInfo ?? {};
+      hasland.value = true
     })
     .catch((error) => {
       console.log(error);
+      hasland.value = true
     });
 }
 </script>
@@ -48,17 +51,17 @@ function getDetail() {
     <div class="result">
       <div class="result-hd">
         <div class="result-icon">
-          <template v-if="orderInfo.isPay">
+          <template v-if="orderInfo.isPay&&hasland">
             <IconPaySuccess class="result-svg-icon" />
           </template>
-          <template v-else>
+          <template v-else-if="hasland">
             <IconPayFail class="result-svg-icon" />
           </template>
         </div>
       </div>
       <div class="result-bd">
-        <div class="result-title">{{ orderInfo.isPay ? '支付成功' : '支付失败' }}</div>
-        <div class="result-title-sub">{{ orderInfo.isPay ? '感谢您的支持' : '再试试支付吧' }}</div>
+        <div class="result-title">{{ !hasland?'支付中' :   orderInfo.isPay ? '支付成功' : '支付失败' }}</div>
+        <div class="result-title-sub">{{ !hasland?'请稍等。。。' : orderInfo.isPay ? '感谢您的支持' : '再试试支付吧' }}</div>
       </div>
     </div>
     <div class="action">
