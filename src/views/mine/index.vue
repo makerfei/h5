@@ -79,8 +79,8 @@ const orderList = ref<Recordable[]>([
 // 常用功能
 const toolList = ref<Recordable[]>([
   { icon: 'balance-o', title: '我的钱包', path: '/wallet' },
-  { icon: 'point-gift-o', title: '积分兑换', path: '/integral/exchange' },
-  { icon: 'coupon-o', title: '优惠券', path: '/coupon' },
+  // { icon: 'point-gift-o', title: '积分兑换', path: '/integral/exchange' },
+  // { icon: 'coupon-o', title: '优惠券', path: '/coupon' },
   { icon: 'location-o', title: '收货地址', path: '/address' },
   { icon: 'setting-o', title: '设置', path: '/setting' },
   { icon: ICON_ART, title: '主题', path: '/theme' },
@@ -126,12 +126,12 @@ function getCounts() {
             {{ userInfo.nick || `还没有昵称` }}
           </div>
           <div class="header-sub">
-            <span class="header-sub-item">ID {{ userInfo.id }}</span>
-            <span class="header-sub-item-separate">|</span>
+            <span class="header-sub-item">ID 8778{{ userInfo.id }}64</span>
+            <!-- <span class="header-sub-item-separate">|</span>
             <span class="header-sub-item">成长值 {{ growth }}</span>
-            <span class="header-sub-item-separate">|</span>
+            <span class="header-sub-item-separate">|</span> -->
             <!-- 会员等级 -->
-            <span v-if="userLevel.id" class="header-sub-item"> 段位 {{ userLevel.name }} </span>
+            <!-- <span v-if="userLevel.id" class="header-sub-item"> 段位 {{ userLevel.name }} </span> -->
           </div>
         </div>
       </div>
@@ -150,7 +150,7 @@ function getCounts() {
     <div class="main">
       <div class="group"></div>
       <!-- 我的钱包 -->
-      <div class="group">
+      <!-- <div class="group">
         <div class="count-list">
           <div class="count-list-item" @click="goPage('/integral')">
             <div class="count-list-item-value">{{ countPair(score, 0) }}</div>
@@ -165,7 +165,7 @@ function getCounts() {
             <div class="count-list-item-label">余额</div>
           </div>
         </div>
-      </div>
+      </div> -->
       <!-- 订单 -->
       <div class="group">
         <div class="group-header van-hairline--bottom" @click="goPage('/order/list')">

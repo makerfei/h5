@@ -80,7 +80,8 @@ function onOrderPay(_orderId: number) {
 }
 
 function onConcatService(_orderId: number) {
-  Toast('未开放：客服');
+  //Toast('未开放：客服');
+  window.open('/api/shortlink/wx/kf')
 }
 
 function onOrderDelivery(orderId: number) {

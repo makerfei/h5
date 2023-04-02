@@ -26,7 +26,8 @@ function onOrderClicked(item: Recordable) {
 }
 
 function onConcatService(_item: Recordable) {
-  Toast('未开放：客服');
+  //Toast('未开放：客服');
+  window.open('/api/shortlink/wx/kf')
 }
 
 function onOrderCancel(item: Recordable) {

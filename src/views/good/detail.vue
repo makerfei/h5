@@ -178,7 +178,8 @@ function getSkuData(basicInfo: Recordable, properties: Recordable[], skuList: Re
 }
 
 function onConcatService() {
-  Toast('未开放：客服');
+     //Toast('未开放：客服');
+  window.open('/api/shortlink/wx/kf')
 }
 
 // 售后服务
