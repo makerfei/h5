@@ -15,7 +15,7 @@ import Price from '@/components/Price/index.vue';
 import OrderSteps from './components/OrderSteps.vue';
 import OrderRate from './components/OrderRate.vue';
 import { decimalFormat } from '@/utils/format';
-
+import { wxPayApi } from '@/utils/index';
 import { useOrderStore } from '@/store/modules/order';
 
 onMounted(() => {
@@ -75,8 +75,20 @@ function onOrderDelete(orderId: number) {
     });
 }
 
-function onOrderPay(_orderId: number) {
-  Toast({ message: '未开放：收银台', duration: 1500 });
+async function onOrderPay(item: any) {
+  Toast.loading({
+    forbidClick: true,
+    message: '支付中...',
+    duration: 0,
+  });
+  const { id, wxPayData, balanceSwitch } = item;
+  if (balanceSwitch == 2) {
+    await wxPayApi(JSON.parse(wxPayData))
+  } else {
+    await API_ORDER.orderPay(id);
+  }
+  Toast.clear();
+  onRefresh();
 }
 
 function onConcatService(_orderId: number) {
@@ -157,12 +169,8 @@ function getDetail() {
           <div class="order-status-title">{{ orderInfo.statusStr }}</div>
           <template v-if="orderInfo.status === 0 && closeTime > 0">
             <div class="order-status-desc">
-              请于<van-count-down
-                class="count-down"
-                :time="closeTime"
-                format="mm 分 ss 秒"
-                @finish="onCountDownFinish"
-              />内付款， 超时订单将自动关闭
+              请于<van-count-down class="count-down" :time="closeTime" format="mm 分 ss 秒" @finish="onCountDownFinish" />内付款，
+              超时订单将自动关闭
             </div>
           </template>
         </div>
@@ -249,13 +257,7 @@ function getDetail() {
           <div class="order-no-p">
             订单编号：
             <span class="order-no-p-value">{{ orderInfo.orderNumber }}</span>
-            <van-button
-              class="order-no-copy-btn"
-              plain
-              type="default"
-              size="mini"
-              @click="onCopy(orderInfo.orderNumber)"
-            >
+            <van-button class="order-no-copy-btn" plain type="default" size="mini" @click="onCopy(orderInfo.orderNumber)">
               复制
             </van-button>
           </div>
@@ -296,7 +298,7 @@ function getDetail() {
             <van-button class="action-bar-btn" round plain @click.stop="onOrderCancel(orderInfo.id)">
               取消订单
             </van-button>
-            <van-button class="action-bar-btn" round type="primary" @click.stop="onOrderPay(orderInfo.id)">
+            <van-button class="action-bar-btn" round type="primary" @click.stop="onOrderPay(orderInfo)">
               去支付
             </van-button>
           </template>
@@ -389,66 +391,69 @@ function getDetail() {
   // align-items: center;
   padding: 8px 15px;
   background: #fff;
+
   &-hd {
     flex: 1;
     // padding:0 10px;
     padding-left: 20px;
   }
+
   &-bd {
     margin-top: 10px;
     padding: 10px 15px 5px;
     font-size: 14px;
     color: #333;
   }
+
   &-inner {
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     &-icon {
       position: absolute;
       top: 2px;
       left: -20px;
     }
+
     &-title {
       font-size: 14px;
       color: #333;
       font-weight: bold;
       margin-bottom: 5px;
     }
+
     &-bottom {
       font-size: 12px;
       color: #999;
     }
   }
+
   &:before {
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
     height: 2px;
-    background: -webkit-repeating-linear-gradient(
-      135deg,
-      #ff6c6c 0,
-      #ff6c6c 20%,
-      transparent 0,
-      transparent 25%,
-      #1989fa 0,
-      #1989fa 45%,
-      transparent 0,
-      transparent 50%
-    );
-    background: repeating-linear-gradient(
-      -45deg,
-      #ff6c6c 0,
-      #ff6c6c 20%,
-      transparent 0,
-      transparent 25%,
-      #1989fa 0,
-      #1989fa 45%,
-      transparent 0,
-      transparent 50%
-    );
+    background: -webkit-repeating-linear-gradient(135deg,
+        #ff6c6c 0,
+        #ff6c6c 20%,
+        transparent 0,
+        transparent 25%,
+        #1989fa 0,
+        #1989fa 45%,
+        transparent 0,
+        transparent 50%);
+    background: repeating-linear-gradient(-45deg,
+        #ff6c6c 0,
+        #ff6c6c 20%,
+        transparent 0,
+        transparent 25%,
+        #1989fa 0,
+        #1989fa 45%,
+        transparent 0,
+        transparent 50%);
     background-size: 80px;
     content: '';
   }
@@ -457,6 +462,7 @@ function getDetail() {
 .mb10 {
   margin-bottom: 10px;
 }
+
 .mt10 {
   margin-top: 10px;
 }
@@ -511,6 +517,7 @@ function getDetail() {
 
     &-price {
       color: var(--gray-color-8);
+
       &-symbol {
         font-size: 12px;
         margin-right: 2px;
@@ -576,6 +583,7 @@ function getDetail() {
 
   &-price {
     color: var(--brand-color);
+
     &-symbol {
       font-size: 12px;
       margin-right: 2px;
@@ -590,9 +598,11 @@ function getDetail() {
 
 .cell {
   font-size: 14px;
+
   .van-cell__title {
     color: var(--gray-color-6);
   }
+
   .van-cell__value {
     color: var(--gray-color-8);
   }
@@ -608,6 +618,7 @@ function getDetail() {
     margin-right: 10px;
     color: var(--gray-color-6);
   }
+
   &-bd {
     flex: 1;
     margin-left: 10px;

@@ -33,15 +33,11 @@ async function toPay(item: Recordable) {
     duration: 0,
   });
   const { id, wxPayData, orderNumber, balanceSwitch } = item;
-  let canPay = true;
   if (balanceSwitch == 2) {
-    canPay = await wxPayApi(JSON.parse(wxPayData))
-  }
-  if(canPay){
+    await wxPayApi(JSON.parse(wxPayData))
+  } else {
     await API_ORDER.orderPay(id);
   }
-  
-
   Toast.clear();
   router.push({
     path: '/order/payResult',

@@ -157,13 +157,12 @@ async function createOrder() {
     if (unref(tradeGoods).origin === 'cart') {
       cartEmptyHandle();
     }
-    let canPay = true;
     if (unref(balanceSwitch) === '2') {
-      canPay = await wxPayApi(res.data.wxpayInfo)
-    }
-    if (canPay) {
+      await wxPayApi(res.data.wxpayInfo)
+    }else{
       await payOrder(res.data.orderData.id);
     }
+   
     Toast.clear();
     submitLoading.value = false;
     router.replace({
