@@ -36,7 +36,7 @@ async function toPay(item: Recordable) {
   if (balanceSwitch == 2) {
     await wxPayApi(JSON.parse(wxPayData))
   } else {
-    await API_ORDER.orderPay(id);
+    await API_ORDER.orderPay({orderId:id});
   }
   Toast.clear();
   router.push({

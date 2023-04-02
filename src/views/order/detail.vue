@@ -85,7 +85,7 @@ async function onOrderPay(item: any) {
   if (balanceSwitch == 2) {
     await wxPayApi(JSON.parse(wxPayData))
   } else {
-    await API_ORDER.orderPay(id);
+    await API_ORDER.orderPay({orderId:id});
   }
   Toast.clear();
   onRefresh();
