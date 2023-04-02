@@ -23,7 +23,8 @@ const hasland = ref<boolean>(false)
 
 function goOrder() {
   router.replace({
-    path: '/mine',
+    path: '/order/detail',
+    query:{orderNumber:route.query.orderNumber}
   });
 }
 
