@@ -4,11 +4,12 @@ import { useRouter } from 'vue-router';
 import { Toast } from 'vant';
 import Price from '@/components/Price/index.vue';
 import { decimalFormat } from '@/utils/format';
-
+import API_ORDER from '@/apis/order';
 import { useOrderStore } from '@/store/modules/order';
+import { wxPayApi } from '@/utils/index';
 
 defineProps({
-  item: { type: Object as PropType<Recordable>, default: () => {} },
+  item: { type: Object as PropType<Recordable>, default: () => { } },
   index: { type: Number, default: 0 },
 });
 const emit = defineEmits(['delete']);
@@ -23,6 +24,28 @@ function onOrderClicked(item: Recordable) {
       orderNumber,
     },
   });
+}
+
+async function toPay(item: Recordable) {
+  Toast.loading({
+    forbidClick: true,
+    message: '支付中...',
+    duration: 0,
+  });
+  const { id, wxPayData, orderNumber, balanceSwitch } = item;
+  let canPay = true;
+  if (balanceSwitch == 2) {
+    canPay = await wxPayApi(JSON.parse(wxPayData))
+  }
+  canPay && await API_ORDER.orderPay(id);
+
+  Toast.clear();
+  router.push({
+    path: '/order/payResult',
+    query: {
+      orderNumber: orderNumber,
+    }
+  })
 }
 
 function onConcatService(_item: Recordable) {
@@ -96,7 +119,7 @@ function onOrderDelete(item: Recordable, index: number) {
       </template>
       <template v-if="item.status === 0">
         <van-button class="list-item-action-btn" round plain @click.stop="onOrderCancel(item)"> 取消订单 </van-button>
-        <van-button class="list-item-action-btn" round plain type="primary" @click.stop="onOrderClicked(item)">
+        <van-button class="list-item-action-btn" round plain type="primary" @click.stop="toPay(item)">
           去支付
         </van-button>
       </template>
@@ -218,6 +241,7 @@ function onOrderDelete(item: Recordable, index: number) {
       flex: 1;
       margin-right: 12px;
     }
+
     &-bd {
       text-align: right;
     }

@@ -13,7 +13,7 @@ import API_USER from '@/apis/user';
 import API_ORDER from '@/apis/order';
 import API_CART from '@/apis/cart';
 import { decimalFormat, mobileShow } from '@/utils/format';
-import { wxPayApi} from '@/utils/index';
+import { wxPayApi } from '@/utils/index';
 import SelectAddress from './components/SelectAddress.vue';
 import GoodCard from '@/components/GoodCard/index.vue';
 
@@ -157,14 +157,11 @@ async function createOrder() {
     if (unref(tradeGoods).origin === 'cart') {
       cartEmptyHandle();
     }
+    let canPay = true;
     if (unref(balanceSwitch) === '2') {
-      await wxPayApi( res.data.wxpayInfo).then(async()=>{
-        await payOrder(res.data.orderData.id);
-      })
-    } else {
-      await payOrder(res.data.orderData.id);
+      canPay = await wxPayApi(res.data.wxpayInfo)
     }
-
+    canPay && await payOrder(res.data.orderData.id);
 
     Toast.clear();
     submitLoading.value = false;

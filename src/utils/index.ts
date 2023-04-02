@@ -12,10 +12,10 @@ import wx from 'weixin-js-sdk'
 
 
 
-export function wxPayApi(data:any): any {
-  new Promise<void>((resolve, reject) => {
-    let { appId, nonceStr, timeStamp, paySign, signType, packageData } =data;
+export function wxPayApi(data: any): any {
 
+  return new Promise<void>((resolve: any, reject: any) => {
+    let { appId, nonceStr, timeStamp, paySign, signType, packageData } = data;
     wx.config({
       debug: true, // 测试阶段可用 true 打包返回给后台用 false
       appId: appId,
@@ -32,14 +32,14 @@ export function wxPayApi(data:any): any {
         package: packageData, // 统一支付接口返回的prepay_id参数值
         signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
         paySign: paySign, // 支付签名
-        success: async function () {
-          resolve()
+        success: function () {
+          resolve(true)
         },
         cancel: function () {
-          reject()
+          reject(false)
         },
         fail: function () {
-          reject()
+          reject(false)
         }
       });
     });
