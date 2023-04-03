@@ -289,7 +289,7 @@ function getDetail() {
           </div>
 
           <template v-for="item in logList">
-            <div class="order-no-p" v-if="item.type==10||item.type==11">
+            <div class="order-no-p" v-if="item.type==20||item.type==21">
               支付时间：
               <span class="order-no-p-value"> {{ item.dateAdd }} </span>
             </div>
