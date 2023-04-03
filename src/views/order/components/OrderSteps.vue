@@ -2,7 +2,7 @@
 import type { PropType } from 'vue';
 
 defineProps({
-  show: { type: Boolean },
+  show: { type: Boolean ,default:false},
   list: { type: Array as PropType<Recordable[]>, default: () => [] },
 });
 
@@ -40,8 +40,8 @@ function handleShowChange(v: boolean) {
     @click-close-icon="onClose"
     @click-overlay="onClose"
   >
-    <div class="steps-header">订单跟踪</div>
-    <div class="steps-body">
+    <div   v-if="show" class="steps-header">订单跟踪</div>
+    <div class="steps-body"  v-if="show">
       <van-steps direction="vertical" :active="list.length - 1">
         <van-step v-for="(item, index) in list" :key="index">
           <div class="steps-item-label">{{ item.typeStr }}</div>
