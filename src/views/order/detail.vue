@@ -164,7 +164,7 @@ function getDetail() {
       if (unref(orderInfo).status === 0 && unref(orderInfo).dateClose) {
         const end = dayjs(unref(orderInfo).dateClose);
         const now = dayjs();
-        closeTime.value = end.diff(now);
+        closeTime.value =  end.diff(now);
       }
     })
     .finally(() => {
@@ -179,7 +179,7 @@ function getDetail() {
       <div class="header">
         <div :class="['order-status', `order-status--${orderInfo.status}`]">
           <div class="order-status-title">{{ orderInfo.statusStr }}</div>
-          <template v-if="orderInfo.status === 0 && closeTime > 0">
+          <template v-if="orderInfo.status === 0 && orderInfo.balanceSwitch == 2&&closeTime>0">
             <div class="order-status-desc">
               请于<van-count-down class="count-down" :time="closeTime" format="mm 分 ss 秒" @finish="onCountDownFinish" />内付款，
               超时订单将自动关闭
@@ -277,13 +277,27 @@ function getDetail() {
             下单时间：
             <span class="order-no-p-value"> {{ orderInfo.dateAdd }}</span>
           </div>
-          <div class="order-no-p">
-            支付方式：
-            <span class="order-no-p-value">在线支付</span>
-          </div>
-          <div class="order-no-p">
+          <!-- <div class="order-no-p" v-if="orderInfo.isPay">
+              支付方式：
+              <span class="order-no-p-value">在线支付</span>
+            </div> -->
+          <div class="order-no-p" v-if="orderInfo.isPay">
             付款方式：
-            <span class="order-no-p-value">钱包余额</span>
+            <span class="order-no-p-value"> {{
+              orderInfo.balanceSwitch == 1 ? '钱包余额' :
+              orderInfo.balanceSwitch == 2 ? '微信支付' : '' }} </span>
+          </div>
+
+          <template v-for="item in logList">
+            <div class="order-no-p" v-if="item.type==10||item.type==11">
+              支付时间：
+              <span class="order-no-p-value"> {{ item.dateAdd }} </span>
+            </div>
+          </template>
+
+          <div class="order-no-p" v-if="orderInfo.transaction_id">
+            支付单号：
+            <span class="order-no-p-value"> {{ orderInfo.transaction_id }} </span>
           </div>
           <div v-if="orderInfo.isNeedLogistics" class="order-no-p">
             配送方式：
