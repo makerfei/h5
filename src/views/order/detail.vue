@@ -76,19 +76,31 @@ function onOrderDelete(orderId: number) {
 }
 
 async function onOrderPay(item: any) {
+  await Dialog.confirm({
+    title: '去支付',
+    message: '正在进行付款操作,去支付?',
+    cancelButtonText: '在考虑下',
+    confirmButtonText: '确认',
+  });
   Toast.loading({
     forbidClick: true,
     message: '支付中...',
     duration: 0,
   });
-  const { id, wxPayData, balanceSwitch } = item;
+  const { id, wxPayData, balanceSwitch, orderNumber } = item;
   if (balanceSwitch == 2) {
     await wxPayApi(JSON.parse(wxPayData))
   } else {
-    await API_ORDER.orderPay({orderId:id});
+    await API_ORDER.orderPay({ orderId: id });
   }
   Toast.clear();
-  onRefresh();
+  router.push({
+    path: '/order/payResult',
+    query: {
+      orderNumber: orderNumber,
+    }
+  })
+
 }
 
 function onConcatService(_orderId: number) {

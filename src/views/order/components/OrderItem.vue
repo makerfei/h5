@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue';
 import { useRouter } from 'vue-router';
-import { Toast } from 'vant';
+import { Toast, Dialog } from 'vant';
 import Price from '@/components/Price/index.vue';
 import { decimalFormat } from '@/utils/format';
 import API_ORDER from '@/apis/order';
@@ -27,6 +27,13 @@ function onOrderClicked(item: Recordable) {
 }
 
 async function toPay(item: Recordable) {
+
+  await Dialog.confirm({
+    title: '去支付',
+    message: '正在进行付款操作,去支付?',
+    cancelButtonText: '在考虑下',
+    confirmButtonText: '确认',
+  });
   Toast.loading({
     forbidClick: true,
     message: '支付中...',
@@ -36,7 +43,7 @@ async function toPay(item: Recordable) {
   if (balanceSwitch == 2) {
     await wxPayApi(JSON.parse(wxPayData))
   } else {
-    await API_ORDER.orderPay({orderId:id});
+    await API_ORDER.orderPay({ orderId: id });
   }
   Toast.clear();
   router.push({
