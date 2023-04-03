@@ -14,7 +14,7 @@
         </div>
         <div class="amount-item">
           <div class="amount-item-label">累计消费</div>
-          <div class="amount-item-value">{{ countPair(detail.totleConsumed) }}</div>
+          <div class="amount-item-value">{{ countPair(detail.totalPayAmount) }}</div>
         </div>
       </div>
     </div>
