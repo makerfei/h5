@@ -22,13 +22,15 @@ import { getAfterSaleTitle } from '@/model/modules/order/afterSale';
 import { useOrderStore } from '@/store/modules/order';
 import { useThrottleFn } from '@vueuse/core';
 import { usePage } from '@/hooks/shared/usePage';
-
+import { wxShare } from '@/utils/index';
 onMounted(() => {
   getGoodsDetail();
 
   if (unref(hasLogin)) {
     getCartCount();
   }
+
+
 });
 
 const route = useRoute();
@@ -69,6 +71,10 @@ function getGoodsDetail() {
     basicInfo.value = res.data.basicInfo;
     logistics.value = res.data?.logistics ?? {};
     content.value = res.data.content;
+
+    wxShare({
+      title: unref(basicInfo).name, desc: unref(basicInfo).characteristic, imgUrl: unref(basicInfo).pic
+    });
 
     // 商品已下架
     if (unref(basicInfo).status === 1) {
@@ -178,7 +184,7 @@ function getSkuData(basicInfo: Recordable, properties: Recordable[], skuList: Re
 }
 
 function onConcatService() {
-     //Toast('未开放：客服');
+  //Toast('未开放：客服');
   window.open('/api/shortlink/wx/kf')
 }
 

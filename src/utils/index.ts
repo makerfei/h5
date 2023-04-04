@@ -17,11 +17,13 @@ import API_USER from '@/apis/user/index'
 export function wxShare(data: any): any {
   return new Promise<void>(async (resolve: any, reject: any) => {
     let { title, desc, link, imgUrl } = data;
-   let {timeStamp,nonceStr,signature}  =await API_USER.wxShare({url:link})
+   let {timeStamp,nonceStr,signature,appId}  =await API_USER.wxShare({url:location.href.split('#')[0]}).then(res=>{
+    return res.data
+   })
     
     wx.config({
-      debug: true, // 测试阶段可用 true 打包返回给后台用 false
-      appId: 'wxb3ac0230f6387556',
+      debug: false, // 测试阶段可用 true 打包返回给后台用 false
+      appId: appId,
       timestamp: timeStamp,
       nonceStr: nonceStr,
       signature: signature,
@@ -34,10 +36,10 @@ export function wxShare(data: any): any {
       link,
       imgUrl,
       success: function () {
-        Toast('分享成功')
+        //Toast('分享成功')
       },
       cancel: function () {
-        Toast('分享已取消')
+       // Toast('分享已取消')
       }
     };
 
