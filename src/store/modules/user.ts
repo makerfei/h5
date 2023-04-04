@@ -40,17 +40,17 @@ export const useUserStore = defineStore({
 
 
     async wxLogin(payload: Recordable = {}) {
-      try {
-        if(this.token) return;
-        const wxLoginRes = await API_wx.wxLogin(payload) ;
-        if(wxLoginRes.data.token){
-          this.token = wxLoginRes.data.token;
-          storage.set('token', wxLoginRes.data.token);
+      return new Promise<void>(async (resolve, reject) => {
+        if (!this.token) {
+          const wxLoginRes = await API_wx.wxLogin(payload);
+          if (wxLoginRes.data.token) {
+            this.token = wxLoginRes.data.token;
+            storage.set('token', wxLoginRes.data.token);
+          }
         }
-        return wxLoginRes.data;
-      } catch (error) {
-        return Promise.reject(error);
-      }
+        resolve();
+      })
+
     },
 
     async login(payload: Recordable = {}) {

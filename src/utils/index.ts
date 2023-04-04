@@ -18,6 +18,9 @@ import API_USER from '@/apis/user/index'
  */
 
 
+
+
+
 //微信分享
 export function wxShare(data: any): any {
   return new Promise<void>(async (resolve: any, reject: any) => {

@@ -23,9 +23,24 @@ import { useOrderStore } from '@/store/modules/order';
 import { useThrottleFn } from '@vueuse/core';
 import { usePage } from '@/hooks/shared/usePage';
 import { wxShare } from '@/utils/index';
-onMounted(() => {
-  getGoodsDetail();
+import { getQueryString } from '@/utils/index'
+import { useUserStoreWithOut } from '@/store/modules/user';
 
+  
+onMounted(async() => {
+  
+
+  //微信获取openIds
+  let code = getQueryString('code', '');
+  let state = getQueryString('state', '');
+  if (code && state) {
+    const userStore = useUserStoreWithOut();
+    await userStore.wxLogin({ code, state })
+  }
+
+  
+  
+  getGoodsDetail();
   if (unref(hasLogin)) {
     getCartCount();
   }

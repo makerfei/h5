@@ -10,15 +10,30 @@ import { useRouter } from 'vue-router';
 import API_GOODS from '@/apis/goods';
 import API_BANNER from '@/apis/banner';
 import IMAGE_LIST_EMPTY from '@/assets/images/empty/good.png';
-import {wxShare} from '@/utils/index';
-onMounted(() => {
+import { wxShare } from '@/utils/index';
+import { getQueryString } from '@/utils/index'
+import { useUserStoreWithOut } from '@/store/modules/user';
+
+
+
+onMounted(async () => {
+
+  //微信获取openIds
+  let code = getQueryString('code', '');
+  let state = getQueryString('state', '');
+
+  if (code && state) {
+    const userStore = useUserStoreWithOut();
+    await userStore.wxLogin({ code, state })
+  }
+
   getBannerList();
   onPage();
   wxShare({
-    title:'街道购',
-    desc:'美国进口商务平台',
-    link:`https://mgdg.shop/api/shortlink/main/snsapi_userinfo`,
-    imgUrl:'https://mgdg.shop/logo.jpg'
+    title: '街道购',
+    desc: '美国进口商务平台',
+    link: `https://mgdg.shop/api/shortlink/main/snsapi_userinfo`,
+    imgUrl: 'https://mgdg.shop/logo.jpg'
   });
 });
 
@@ -91,28 +106,16 @@ function onGoodClicked(id: number) {
   <div class="container">
     <div class="swiper">
       <van-swipe :autoplay="5000" class="swiper">
-        <van-swipe-item
-          v-for="item in bannerList"
-          :key="item.id"
-          class="swiper-item"
-          @click="onBannerClicked(item.linkUrl)"
-        >
+        <van-swipe-item v-for="item in bannerList" :key="item.id" class="swiper-item"
+          @click="onBannerClicked(item.linkUrl)">
           <van-image class="swiper-item-img" fit="cover" :src="item.picUrl" :alt="item.title" />
         </van-swipe-item>
       </van-swipe>
     </div>
     <div class="main">
       <Plate class="section-header" title="商品列表" />
-      <van-list
-        v-model:loading="listLoading"
-        v-model:error="listError"
-        class="list"
-        :finished="listFinished"
-        :finished-text="listFinishedText"
-        :error-text="listErrorText"
-        :immediate-check="false"
-        @load="onPageLoad"
-      >
+      <van-list v-model:loading="listLoading" v-model:error="listError" class="list" :finished="listFinished"
+        :finished-text="listFinishedText" :error-text="listErrorText" :immediate-check="false" @load="onPageLoad">
         <div v-for="item in list" :key="item.id" class="list-col">
           <div class="list-item" @click="onGoodClicked(item.id)">
             <div v-if="item.recommendStatus" class="list-item-badge">推荐</div>

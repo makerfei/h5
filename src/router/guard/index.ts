@@ -3,7 +3,7 @@ import { getDevicePlatform } from '@/utils';
 import deviceModel from '@/utils/helpers/deviceModel';
 import { useUserStoreWithOut } from '@/store/modules/user';
 import { useAppStoreWithOut } from '@/store/modules/app';
-import { getQueryString } from '@/utils/index'
+
 
 let appLoadedFlag: boolean; // 应用窗口加载标记
 
@@ -47,12 +47,7 @@ router.beforeEach(async (to, from, next) => {
     const appStore = useAppStoreWithOut();
     await appStore.updateTheme();
     //微信获取openIds
-    let code = getQueryString('code', '');
-    let state = getQueryString('state', '');
-
-    if (code && state && !token) {
-      await userStore.wxLogin({ code, state })
-    }
+   
   }
 
 
