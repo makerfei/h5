@@ -17,7 +17,7 @@ onMounted(() => {
   wxShare({
     title:'街道购',
     desc:'美国进口商务平台',
-    link:'https://mgdg.shop/api/shortlink/main/snsapi_userinfo',
+    link:`https://mgdg.shop/api/shortlink/main/snsapi_userinfo`,
     imgUrl:'https://mgdg.shop/logo.jpg'
   });
 });

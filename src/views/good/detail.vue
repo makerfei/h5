@@ -71,12 +71,11 @@ function getGoodsDetail() {
     basicInfo.value = res.data.basicInfo;
     logistics.value = res.data?.logistics ?? {};
     content.value = res.data.content;
-
     wxShare({
       title: unref(basicInfo).name,
       desc: unref(basicInfo).characteristic,
       imgUrl: unref(basicInfo).pic,
-      url:`https://mgdg.shop/api/shortlink/goods/${unref(basicInfo).id}`
+      link:`https://mgdg.shop/api/shortlink/goods/${unref(basicInfo).id}`
     });
 
     // 商品已下架

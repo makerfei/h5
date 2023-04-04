@@ -1,6 +1,11 @@
 export { throttle, debounce, deepClone } from './lodash';
+import { computed ,unref} from 'vue';
 import wx from 'weixin-js-sdk'
-import { Toast } from 'vant';
+
+
+
+
+
 import API_USER from '@/apis/user/index'
 /**
  * 获取链接某个参数
@@ -17,12 +22,28 @@ import API_USER from '@/apis/user/index'
 export function wxShare(data: any): any {
   return new Promise<void>(async (resolve: any, reject: any) => {
     let { title, desc, link, imgUrl } = data;
+   // const { token } = usePage();
+    let token = localStorage.getItem('token');
+    let userInfoStr = localStorage.getItem('userInfo');
+    let userInfoJson = {username:''}
+    if(userInfoStr){
+      try {
+        userInfoJson  =JSON.parse(userInfoStr)
+        } catch (error) {
+        
+      }
+    }
+    
+    if(userInfoJson.username){
+      title = `【${userInfoJson.username}分享】` + title
+    }
+    desc = `【街道购】` + desc
    let {timeStamp,nonceStr,signature,appId}  =await API_USER.wxShare({url:location.href.split('#')[0]}).then(res=>{
     return res.data
    })
     
     wx.config({
-      debug: false, // 测试阶段可用 true 打包返回给后台用 false
+      debug: true, // 测试阶段可用 true 打包返回给后台用 false
       appId: appId,
       timestamp: timeStamp,
       nonceStr: nonceStr,
@@ -33,7 +54,7 @@ export function wxShare(data: any): any {
     let shareConfig = {
       title,
       desc,
-      link,
+      link:link+`?shareId=${token||''}`,
       imgUrl,
       success: function () {
         //Toast('分享成功')
@@ -42,8 +63,6 @@ export function wxShare(data: any): any {
        // Toast('分享已取消')
       }
     };
-
-
     wx.ready(function () {
       wx.showMenuItems({
         menuList: ['menuItem:copyUrl', 'menuItem:share:timeline', 'menuItem:share:appMessage', 'menuItem:share:qq', 'menuItem:share:QZone'] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3

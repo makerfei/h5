@@ -34,6 +34,10 @@ const agree = ref(true);
 function goPage(path: string) {
   router.push({ path });
 }
+function goLink(path: string) {
+  window.location.href =path
+}
+
 
 const submitLoading = ref(false);
 const submitted = computed(() => {
@@ -138,6 +142,8 @@ function onSubmit() {
       <div class="check-type">
         <div class="check-type-hd">
           <span class="check-type-btn" @click="onLoginTypeChange">{{ checkTypeText }}</span>
+          &nbsp;&nbsp;
+          <span class="check-type-btn" @click=" goLink('/api/shortlink/main/snsapi_userinfo')">微信登录</span>
         </div>
         <div class="check-type-bd">
           <template v-if="loginType === 'system'">
