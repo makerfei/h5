@@ -10,10 +10,13 @@ import { useRouter } from 'vue-router';
 import API_GOODS from '@/apis/goods';
 import API_BANNER from '@/apis/banner';
 import IMAGE_LIST_EMPTY from '@/assets/images/empty/good.png';
-
+import {wxShare} from '@/utils/index';
 onMounted(() => {
   getBannerList();
   onPage();
+  wxShare({
+    title:'街道购', desc:'美国进口商务平台', link:'https://mgdg.shop/api/shortlink/main/snsapi_userinfo', imgUrl:'https://mgdg.shop/api/shortlink/img/mainShare'
+  });
 });
 
 const router = useRouter();

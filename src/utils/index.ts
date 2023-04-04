@@ -1,5 +1,7 @@
 export { throttle, debounce, deepClone } from './lodash';
 import wx from 'weixin-js-sdk'
+import { Toast } from 'vant';
+import API_USER from '@/apis/user/index'
 /**
  * 获取链接某个参数
  * @param {string} key 参数名称
@@ -11,12 +13,74 @@ import wx from 'weixin-js-sdk'
  */
 
 
+//微信分享
+export function wxShare(data: any): any {
+  return new Promise<void>(async (resolve: any, reject: any) => {
+    let { title, desc, link, imgUrl } = data;
+   let {timeStamp,nonceStr,signature}  =await API_USER.wxShare({url:link})
+    
+    wx.config({
+      debug: true, // 测试阶段可用 true 打包返回给后台用 false
+      appId: 'wxb3ac0230f6387556',
+      timestamp: timeStamp,
+      nonceStr: nonceStr,
+      signature: signature,
+      jsApiList: ['updateTimelineShareData', 'updateAppMessageShareData', 'onMenuShareWeibo', 'onMenuShareQZone', 'hideMenuItems', 'showMenuItems', 'chooseImage', 'previewImage', 'uploadImage', 'downloadImage']
+    });
+
+    let shareConfig = {
+      title,
+      desc,
+      link,
+      imgUrl,
+      success: function () {
+        Toast('分享成功')
+      },
+      cancel: function () {
+        Toast('分享已取消')
+      }
+    };
+
+
+    wx.ready(function () {
+      wx.showMenuItems({
+        menuList: ['menuItem:copyUrl', 'menuItem:share:timeline', 'menuItem:share:appMessage', 'menuItem:share:qq', 'menuItem:share:QZone'] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+      });
+      // 分享到朋友圈
+      wx.updateTimelineShareData(shareConfig);
+
+      // 分享给朋友
+      wx.updateAppMessageShareData(shareConfig);
+
+      // 分享到QQ
+      wx.onMenuShareQQ(shareConfig);
+
+      // 分享到腾讯微博
+      wx.onMenuShareWeibo(shareConfig);
+
+      // 分享到QQ空间
+      wx.onMenuShareQZone(shareConfig);
+      resolve();
+    });
+
+
+  })
+
+}
+
+
+
+
+
+
+
+
 
 export function wxPayApi(data: any): any {
 
   return new Promise<void>((resolve: any, reject: any) => {
     let { appId, nonceStr, timeStamp, paySign, signType, packageData } = data;
-   
+
     wx.config({
       debug: false, // 测试阶段可用 true 打包返回给后台用 false
       appId: appId,

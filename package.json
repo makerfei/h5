@@ -28,7 +28,6 @@
     "vue": "^3.2.37",
     "vue-page-stack-router": "^3.2.5",
     "vue-router": "^4.1.3",
-    "wechatpay-node-v3": "^2.1.1",
     "weixin-js-sdk": "^1.6.0"
   },
   "devDependencies": {

@@ -188,6 +188,18 @@ export function userShoppingAddressUpdate(data?: Recordable) {
   });
 }
 
+/**
+ * 修改收货地址
+ */
+export function wxShare(data?: any):any {
+  return request({
+    url: `/wx/share`,
+    method: 'get',
+    params: data,
+  });
+}
+
+
 export default {
   userAmount,
   userCashLog,
@@ -208,4 +220,5 @@ export default {
   userShoppingAddressDetail,
   userShoppingAddressList,
   userShoppingAddressUpdate,
+  wxShare
 };
