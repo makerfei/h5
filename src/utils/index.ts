@@ -16,13 +16,13 @@ import API_USER from '@/apis/user/index'
 //微信分享
 export function wxShare(data: any): any {
   return new Promise<void>(async (resolve: any, reject: any) => {
-    let { title, desc, link, imgUrl ,url} = data;
-   let {timeStamp,nonceStr,signature,appId}  =await API_USER.wxShare({url}).then(res=>{
+    let { title, desc, link, imgUrl } = data;
+   let {timeStamp,nonceStr,signature,appId}  =await API_USER.wxShare({url:location.href.split('#')[0]}).then(res=>{
     return res.data
    })
     
     wx.config({
-      debug: true, // 测试阶段可用 true 打包返回给后台用 false
+      debug: false, // 测试阶段可用 true 打包返回给后台用 false
       appId: appId,
       timestamp: timeStamp,
       nonceStr: nonceStr,
