@@ -5,8 +5,8 @@ import { IGoodsMap } from './typings';
  * @param {*} data
  */
 export function getAfterSaleTitle(data: string) {
-  const start = '收货后结算';
-  const separator = ' · ';
+  const start =  ''   //'收货后结算';
+  const separator = '';
 
   if (data.length) {
     if (data.includes('1') || (data.includes('0') && data.includes('2'))) {
