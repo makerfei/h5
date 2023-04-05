@@ -35,7 +35,7 @@ function goPage(path: string) {
   router.push({ path });
 }
 function goLinkLogin() {
-  window.location.href = (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/main/snsapi_userinfo'
+  window.location.href =`${location.protocol}//`+ (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/main/snsapi_userinfo'
 }
 
 
