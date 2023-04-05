@@ -5,7 +5,7 @@ import { router } from '@/router';
 import API_USER from '@/apis/user';
 import API_wx from '@/apis/wx';
 import { loginProviderType } from '@/constants/modules/user';
-
+import { getDevicePlatform } from '@/utils';
 export interface UserInfo {
   id?: number;
   nick?: string;
@@ -41,7 +41,7 @@ export const useUserStore = defineStore({
 
     async wxLogin(payload: Recordable = {}) {
       return new Promise<void>(async (resolve, reject) => {
-        if (!this.token) {
+        if (!this.token&&getDevicePlatform().isInWeChatApp) {
           const wxLoginRes = await API_wx.wxLogin(payload);
           if (wxLoginRes.data.token) {
             this.token = wxLoginRes.data.token;

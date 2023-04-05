@@ -39,9 +39,9 @@ async function toPay(item: Recordable) {
     message: '支付中...',
     duration: 0,
   });
-  const { id, wxPayData, orderNumber, balanceSwitch } = item;
+  const { id, orderNumber, balanceSwitch } = item;
   if (balanceSwitch == 2) {
-    await wxPayApi(JSON.parse(wxPayData))
+    await wxPayApi({ orderId: id })
   } else {
     await API_ORDER.orderPay({ orderId: id });
   }

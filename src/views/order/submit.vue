@@ -4,6 +4,10 @@ export default {
 };
 </script>
 
+
+
+
+
 <script lang="ts" setup>
 import { computed, onMounted, ref, unref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -13,12 +17,18 @@ import API_USER from '@/apis/user';
 import API_ORDER from '@/apis/order';
 import API_CART from '@/apis/cart';
 import { decimalFormat, mobileShow } from '@/utils/format';
-import { wxPayApi } from '@/utils/index';
+import { wxPayApi, wxQRcodePay } from '@/utils/index';
 import SelectAddress from './components/SelectAddress.vue';
 import GoodCard from '@/components/GoodCard/index.vue';
 
 import { useOrderStore } from '@/store/modules/order';
+import { getDevicePlatform } from '@/utils';
 
+
+
+const isInWeChatApp = computed(() => {
+  return getDevicePlatform().isInWeChatApp;
+});
 onMounted(() => {
   if (unref(isNeedLogistics)) {
     getAddressInfo();
@@ -75,6 +85,9 @@ function getOrderSetInfo() {
 }
 
 const remark = ref('');
+
+
+
 
 const tradeGoods = computed(() => orderStore.getTradeGoods);
 const goodList = computed(() => unref(tradeGoods).list);
@@ -157,12 +170,48 @@ async function createOrder() {
     if (unref(tradeGoods).origin === 'cart') {
       cartEmptyHandle();
     }
-    if (unref(balanceSwitch) === '2') {
-      await wxPayApi(res.data.wxpayInfo)
-    }else{
-      await payOrder(res.data.orderData.id);
+    if (unref(balanceSwitch) === '1') {
+      await payOrder({ orderId: res.data.orderData.id });
+    } else if (unref(balanceSwitch) === '2') {
+      await wxPayApi({ orderId: res.data.orderData.id ,type:'wx'})
+    } else if (unref(balanceSwitch) === '3') {
+      await wxPayApi({ orderId: res.data.orderData.id ,type:'h5'})
+      // Toast.clear();
+
+      // let imgData = await wxQRcodePay({ orderId: 10 })
+      // await Dialog.confirm({
+      //   title: '微信扫码支付',
+      //   message: `<div><img src='${imgData.data}' /></div>`,
+      //   // confirmButtonText: '',
+      //   // cancelButtonText: '取消支付',
+      //   allowHtml: true,
+      //   beforeClose: (action: any) => {
+      //     return new Promise(async (resolve) => {
+      //       if (action === 'confirm') {
+      //         let orderDetail = await API_ORDER.orderDetail({ orderNumber: res.data.orderData.orderNumber })
+      //         if (orderDetail?.data?.orderInfo?.isPay === 1) {
+      //           resolve(true);
+      //         } else {
+      //           Toast({ message: '未检测到支付订单', duration: 1500 });
+      //           resolve(false);
+      //         }
+      //       } else {
+      //         // 拦截取消操作
+      //         resolve(true);
+      //       }
+      //     })
+      //   }
+      // }).then(() => { })
+      //   .catch(() => {
+      //     // on cancel
+      //   });
+
+      //  QRCode.value = await wxQRcodePay({ orderId: res.data.orderData.id }).then(item=>item.data) as any;
+      //  showQRcode.value = true
     }
-   
+
+
+
     Toast.clear();
     submitLoading.value = false;
     router.replace({
@@ -183,7 +232,7 @@ async function createOrder() {
 /**
  * 付款方式 有且仅有一种 钱包支付T.T
  */
-function payOrder(orderId: number) {
+function payOrder({ orderId }) {
   return API_ORDER.orderPay({ orderId });
 }
 
@@ -253,10 +302,16 @@ function cartEmptyHandle() {
             <van-radio name="1"></van-radio>
           </template>
         </van-cell>
-        <van-cell title="微信支付" center>
+        <van-cell v-if='isInWeChatApp' title="微信支付" center>
           <template #label></template>
           <template #right-icon>
             <van-radio name="2"></van-radio>
+          </template>
+        </van-cell>
+        <van-cell v-if='!isInWeChatApp' title="扫码支付" center>
+          <template #label></template>
+          <template #right-icon>
+            <van-radio name="3"></van-radio>
           </template>
         </van-cell>
       </van-radio-group>
@@ -276,10 +331,18 @@ function cartEmptyHandle() {
         </van-button>
       </div>
     </div>
+
+
+
   </div>
 </template>
 
 <style lang="less" scoped>
+.QRCode {
+  text-align: center;
+}
+
+
 .section {
   box-sizing: border-box;
   position: relative;

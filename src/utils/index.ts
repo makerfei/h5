@@ -1,7 +1,8 @@
 export { throttle, debounce, deepClone } from './lodash';
-import { computed ,unref} from 'vue';
+
 import wx from 'weixin-js-sdk'
 
+import { getWxjaspiInfoByOrderApi, wxQRcodePayApi } from '../apis/order/index'
 
 
 
@@ -24,27 +25,33 @@ import API_USER from '@/apis/user/index'
 //微信分享
 export function wxShare(data: any): any {
   return new Promise<void>(async (resolve: any, reject: any) => {
+    // 不是微信内部没有此功能
+    if (!getDevicePlatform().isInWeChatApp) {
+      resolve();
+      return
+    }
+
     let { title, desc, link, imgUrl } = data;
-   // const { token } = usePage();
+    // const { token } = usePage();
     let token = localStorage.getItem('token');
     let userInfoStr = localStorage.getItem('userInfo');
-    let userInfoJson = {username:''}
-    if(userInfoStr){
+    let userInfoJson = { username: '' }
+    if (userInfoStr) {
       try {
-        userInfoJson  =JSON.parse(userInfoStr)
-        } catch (error) {
-        
+        userInfoJson = JSON.parse(userInfoStr)
+      } catch (error) {
+
       }
     }
-    
-    if(userInfoJson.username){
+
+    if (userInfoJson.username) {
       title = `【${userInfoJson.username}分享】` + title
     }
     desc = `【街道购】` + desc
-   let {timeStamp,nonceStr,signature,appId}  =await API_USER.wxShare({url:location.href.split('#')[0]}).then(res=>{
-    return res.data
-   })
-    
+    let { timeStamp, nonceStr, signature, appId } = await API_USER.wxShare({ url: location.href.split('#')[0] }).then(res => {
+      return res.data
+    })
+
     wx.config({
       debug: false, // 测试阶段可用 true 打包返回给后台用 false
       appId: appId,
@@ -57,13 +64,13 @@ export function wxShare(data: any): any {
     let shareConfig = {
       title,
       desc,
-      link:link+`?shareId=${token||''}`,
+      link: link + `?shareId=${token || ''}`,
       imgUrl,
       success: function () {
         //Toast('分享成功')
       },
       cancel: function () {
-       // Toast('分享已取消')
+        // Toast('分享已取消')
       }
     };
     wx.ready(function () {
@@ -94,44 +101,60 @@ export function wxShare(data: any): any {
 
 
 
+//生成扫的二维码支付
+export async function wxQRcodePay({ orderId }) {
+  return wxQRcodePayApi({ orderId })
+
+}
 
 
 
 
+//通过订单的维度生成微信支付信息支付的信息
+let getWxjaspiInfoByOrder = ({ orderId, type }) => {
+  return getWxjaspiInfoByOrderApi({ orderId, type })
+}
 
-
-export function wxPayApi(data: any): any {
-
-  return new Promise<void>((resolve: any, reject: any) => {
-    let { appId, nonceStr, timeStamp, paySign, signType, packageData } = data;
-
-    wx.config({
-      debug: false, // 测试阶段可用 true 打包返回给后台用 false
-      appId: appId,
-      timestamp: timeStamp,
-      nonceStr: nonceStr,
-      signature: paySign,
-      jsApiList: ['chooseWXPay']
-    });
-    wx.ready(function () {
-      wx.chooseWXPay({
+// 订单维度 进行微信支付   微信内部支付
+export function wxPayApi({ orderId, type }): any {
+  return new Promise<void>(async (resolve: any, reject: any) => {
+    //订单生成微信jsap支付信息
+    let { data: { appId, nonceStr, timeStamp, paySign, signType, packageData, h5_url } } = await getWxjaspiInfoByOrder({ orderId, type }) as any
+    if (h5_url) {
+      window.location.href = h5_url;
+      resolve(true)
+    } else {
+      wx.config({
+        debug: false, // 测试阶段可用 true 打包返回给后台用 false
         appId: appId,
-        timestamp: timeStamp, // 时间戳
-        nonceStr: nonceStr, // 随机字符串
-        package: packageData, // 统一支付接口返回的prepay_id参数值
-        signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-        paySign: paySign, // 支付签名
-        success: function () {
-          resolve(true)
-        },
-        cancel: function () {
-          resolve(false)
-        },
-        fail: function () {
-          resolve(false)
-        }
+        timestamp: timeStamp,
+        nonceStr: nonceStr,
+        signature: paySign,
+        jsApiList: ['chooseWXPay']
       });
-    });
+      wx.ready(function () {
+        wx.chooseWXPay({
+          appId: appId,
+          timestamp: timeStamp, // 时间戳
+          nonceStr: nonceStr, // 随机字符串
+          package: packageData, // 统一支付接口返回的prepay_id参数值
+          signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+          paySign: paySign, // 支付签名
+          success: function () {
+            resolve(true)
+          },
+          cancel: function () {
+            resolve(true)
+          },
+          fail: function () {
+            resolve(true)
+          }
+        });
+      });
+    }
+
+
+
   })
 }
 

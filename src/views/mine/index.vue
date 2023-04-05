@@ -5,6 +5,7 @@ export default {
 </script>
 
 <script lang="ts" setup>
+
 import { computed, onMounted, ref, unref } from 'vue';
 import API_USER from '@/apis/user';
 import API_DISCOUNTS from '@/apis/discounts';
@@ -26,6 +27,7 @@ onMounted(() => {
 
 
 const { hasLogin, goLogin, goPage } = usePage();
+
 
 // 统计
 const growth = ref(0); // 成长值

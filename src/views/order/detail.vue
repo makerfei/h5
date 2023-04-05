@@ -87,9 +87,9 @@ async function onOrderPay(item: any) {
     message: '支付中...',
     duration: 0,
   });
-  const { id, wxPayData, balanceSwitch, orderNumber } = item;
+  const { id, balanceSwitch, orderNumber } = item;
   if (balanceSwitch == 2) {
-    await wxPayApi(JSON.parse(wxPayData))
+    await wxPayApi({ orderId: id })
   } else {
     await API_ORDER.orderPay({ orderId: id });
   }

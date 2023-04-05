@@ -178,6 +178,35 @@ export function orderStatistics(data?: Recordable) {
   });
 }
 
+/**
+ * 订单维度 得到微信的支付信息
+ */
+export function getWxjaspiInfoByOrderApi(data?: Recordable) {
+  return request({
+    url: `/order/getWxjaspiInfoByOrder`,
+    method: 'post',
+    data,
+  });
+}
+
+/**
+ * 获取跳转到微信公众号的链接二维码
+ */
+export function wxQRcodePayApi(data?: Recordable) {
+  return request({
+    url: `/order/wxQRcodePayApi`,
+    method: 'get',
+    data,
+  });
+}
+
+
+
+
+
+
+
+
 export default {
   peisonFeeList,
   orderClose,

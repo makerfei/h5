@@ -7,7 +7,7 @@ import { loginProviderType } from '@/constants/modules/user';
 import { isMobile } from '@/utils/validate';
 import deviceId from '@/utils/helpers/deviceId';
 import deviceModel from '@/utils/helpers/deviceModel';
-
+import { getDevicePlatform } from '@/utils';
 import { useUserStore } from '@/store/modules/user';
 import { useSmsCode } from '@/hooks/shared/useSmsCode';
 
@@ -22,6 +22,12 @@ const loginProvider = computed(() => {
 const checkTypeText = computed(() => {
   return unref(loginType) === 'sms' ? '密码登录' : '验证码登录';
 });
+
+const isInWeChatApp = computed(() => {
+  return getDevicePlatform().isInWeChatApp;
+});
+
+
 
 function onLoginTypeChange() {
   loginType.value = loginType.value === 'sms' ? 'system' : 'sms';
@@ -143,7 +149,7 @@ function onSubmit() {
         <div class="check-type-hd">
           <span class="check-type-btn" @click="onLoginTypeChange">{{ checkTypeText }}</span>
           &nbsp;&nbsp;
-          <span class="check-type-btn" @click=" goLinkLogin()">微信登录</span>
+          <span class="check-type-btn" v-if="isInWeChatApp" @click=" goLinkLogin()">微信登录</span>
         </div>
         <div class="check-type-bd">
           <template v-if="loginType === 'system'">
