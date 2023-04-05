@@ -46,7 +46,7 @@ export function wxShare(data: any): any {
    })
     
     wx.config({
-      debug: true, // 测试阶段可用 true 打包返回给后台用 false
+      debug: false, // 测试阶段可用 true 打包返回给后台用 false
       appId: appId,
       timestamp: timeStamp,
       nonceStr: nonceStr,

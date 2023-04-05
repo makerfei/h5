@@ -3,7 +3,7 @@
  */
 export const app = {
   name: 'mgdg',
-  link: 'https://mgdg.shop',
+  link: import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host,
 };
 
 export interface ITheme {

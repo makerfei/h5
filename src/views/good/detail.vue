@@ -90,7 +90,7 @@ function getGoodsDetail() {
       title: unref(basicInfo).name,
       desc: unref(basicInfo).characteristic,
       imgUrl: unref(basicInfo).pic,
-      link:`https://mgdg.shop/api/shortlink/goods/${unref(basicInfo).id}`
+      link: (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+`/api/shortlink/goods/${unref(basicInfo).id}`
     });
 
     // 商品已下架
@@ -202,7 +202,7 @@ function getSkuData(basicInfo: Recordable, properties: Recordable[], skuList: Re
 
 function onConcatService() {
   //Toast('未开放：客服');
-  window.open('/api/shortlink/wx/kf')
+  window.open( (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/wx/kf')
 }
 
 // 售后服务
