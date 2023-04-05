@@ -165,7 +165,6 @@ async function createOrder() {
   });
   submitLoading.value = true;
   try {
-
     const res = await API_ORDER.orderCreate(params);
     if (unref(tradeGoods).origin === 'cart') {
       cartEmptyHandle();
@@ -175,39 +174,36 @@ async function createOrder() {
     } else if (unref(balanceSwitch) === '2') {
       await wxPayApi({ orderId: res.data.orderData.id ,type:'wx'})
     } else if (unref(balanceSwitch) === '3') {
-      await wxPayApi({ orderId: res.data.orderData.id ,type:'h5'})
-      // Toast.clear();
+     // await wxPayApi({ orderId: res.data.orderData.id ,type:'h5'})
+      Toast.clear();
 
-      // let imgData = await wxQRcodePay({ orderId: 10 })
-      // await Dialog.confirm({
-      //   title: '微信扫码支付',
-      //   message: `<div><img src='${imgData.data}' /></div>`,
-      //   // confirmButtonText: '',
-      //   // cancelButtonText: '取消支付',
-      //   allowHtml: true,
-      //   beforeClose: (action: any) => {
-      //     return new Promise(async (resolve) => {
-      //       if (action === 'confirm') {
-      //         let orderDetail = await API_ORDER.orderDetail({ orderNumber: res.data.orderData.orderNumber })
-      //         if (orderDetail?.data?.orderInfo?.isPay === 1) {
-      //           resolve(true);
-      //         } else {
-      //           Toast({ message: '未检测到支付订单', duration: 1500 });
-      //           resolve(false);
-      //         }
-      //       } else {
-      //         // 拦截取消操作
-      //         resolve(true);
-      //       }
-      //     })
-      //   }
-      // }).then(() => { })
-      //   .catch(() => {
-      //     // on cancel
-      //   });
-
-      //  QRCode.value = await wxQRcodePay({ orderId: res.data.orderData.id }).then(item=>item.data) as any;
-      //  showQRcode.value = true
+      let imgData = await wxQRcodePay({ orderId: res.data.orderData.id })
+      await Dialog.confirm({
+        title: '微信扫码支付',
+        message: `<div><img src='${imgData.data}' /></div>`,
+        confirmButtonText: '检验支付是否成功',
+        cancelButtonText: '取消支付',
+        allowHtml: true,
+        beforeClose: (action: any) => {
+          return new Promise(async (resolve) => {
+            if (action === 'confirm') {
+              let orderDetail = await API_ORDER.orderDetail({ orderNumber: res.data.orderData.orderNumber })
+              if (orderDetail?.data?.orderInfo?.isPay === 1) {
+                resolve(true);
+              } else {
+                Toast({ message: '未检测到支付订单', duration: 1500 });
+                resolve(false);
+              }
+            } else {
+              // 拦截取消操作
+              resolve(true);
+            }
+          })
+        }
+      }).then(() => { })
+        .catch(() => {
+          // on cancel
+        });
     }
 
 
