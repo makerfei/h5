@@ -196,7 +196,7 @@ export function wxQRcodePayApi(data?: Recordable) {
   return request({
     url: `/order/wxQRcodePayApi`,
     method: 'get',
-    data,
+    params: data,
   });
 }
 

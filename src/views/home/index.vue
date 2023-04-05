@@ -15,7 +15,7 @@ import { getQueryString } from '@/utils/index'
 import { useUserStoreWithOut } from '@/store/modules/user';
 
 
-
+ 
 onMounted(async () => {
 
   //微信获取openIds

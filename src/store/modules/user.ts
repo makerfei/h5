@@ -38,10 +38,18 @@ export const useUserStore = defineStore({
   },
   actions: {
 
+    async tokenLogin(payload: Recordable = {}) {
+      return new Promise<void>(async (resolve, reject) => {
+        storage.set('token', payload.token);
+        resolve();
+      })
+    },
+
+
 
     async wxLogin(payload: Recordable = {}) {
       return new Promise<void>(async (resolve, reject) => {
-        if (!this.token&&getDevicePlatform().isInWeChatApp) {
+        if (!this.token && getDevicePlatform().isInWeChatApp) {
           const wxLoginRes = await API_wx.wxLogin(payload);
           if (wxLoginRes.data.token) {
             this.token = wxLoginRes.data.token;

@@ -111,15 +111,15 @@ export async function wxQRcodePay({ orderId }) {
 
 
 //通过订单的维度生成微信支付信息支付的信息
-let getWxjaspiInfoByOrder = ({ orderId, type }) => {
-  return getWxjaspiInfoByOrderApi({ orderId, type })
+let getWxjaspiInfoByOrder = ({ orderId, type,openid='' }) => {
+  return getWxjaspiInfoByOrderApi({ orderId, type ,openid})
 }
 
 // 订单维度 进行微信支付   微信内部支付
-export function wxPayApi({ orderId, type }): any {
+export function wxPayApi({ orderId, type='h5',openid='' }): any {
   return new Promise<void>(async (resolve: any, reject: any) => {
     //订单生成微信jsap支付信息
-    let { data: { appId, nonceStr, timeStamp, paySign, signType, packageData, h5_url } } = await getWxjaspiInfoByOrder({ orderId, type }) as any
+    let { data: { appId, nonceStr, timeStamp, paySign, signType, packageData, h5_url } } = await getWxjaspiInfoByOrder({ orderId, type ,openid}) as any
     if (h5_url) {
       window.location.href = h5_url;
       resolve(true)
@@ -140,14 +140,14 @@ export function wxPayApi({ orderId, type }): any {
           package: packageData, // 统一支付接口返回的prepay_id参数值
           signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
           paySign: paySign, // 支付签名
-          success: function () {
-            resolve(true)
+          success: function (res) {
+            resolve(res||true)
           },
-          cancel: function () {
-            resolve(true)
+          cancel: function (res) {
+            resolve(res||true)
           },
-          fail: function () {
-            resolve(true)
+          fail: function (res) {
+            resolve(res||true)
           }
         });
       });
