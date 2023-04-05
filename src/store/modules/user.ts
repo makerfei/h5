@@ -40,6 +40,7 @@ export const useUserStore = defineStore({
 
     async tokenLogin(payload: Recordable = {}) {
       return new Promise<void>(async (resolve, reject) => {
+        this.token = payload.token;
         storage.set('token', payload.token);
         resolve();
       })
