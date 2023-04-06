@@ -285,7 +285,9 @@ function getDetail() {
             付款方式：
             <span class="order-no-p-value"> {{
               orderInfo.balanceSwitch == 1 ? '钱包余额' :
-              orderInfo.balanceSwitch == 2 ? '微信支付' : '' }} </span>
+              orderInfo.balanceSwitch == 2 ? '微信支付' :
+              orderInfo.balanceSwitch == 3 ? '扫码支付' :
+               '' }} </span>
           </div>
 
           <template v-for="item in logList">

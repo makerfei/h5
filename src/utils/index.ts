@@ -116,11 +116,13 @@ let getWxjaspiInfoByOrder = ({ orderId, type,openid='' }) => {
 }
 
 // 订单维度 进行微信支付   微信内部支付
-export function wxPayApi({ orderId, type='h5',openid='' }): any {
+export function wxPayApi({ orderId, type='wx',openid='' }): any {
   return new Promise<void>(async (resolve: any, reject: any) => {
     //订单生成微信jsap支付信息
-    let { data: { appId, nonceStr, timeStamp, paySign, signType, packageData, h5_url } } = await getWxjaspiInfoByOrder({ orderId, type ,openid}) as any
-    if (h5_url) {
+    let { data: { appId, nonceStr, timeStamp, paySign, signType, packageData, h5_url,code_url } } = await getWxjaspiInfoByOrder({ orderId, type ,openid}) as any
+    if(code_url){
+      resolve(code_url)
+    }else if (h5_url) {
       window.location.href = h5_url;
       resolve(true)
     } else {

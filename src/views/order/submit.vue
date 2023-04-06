@@ -174,10 +174,11 @@ async function createOrder() {
     } else if (unref(balanceSwitch) === '2') {
       await wxPayApi({ orderId: res.data.orderData.id ,type:'wx'})
     } else if (unref(balanceSwitch) === '3') {
-     // await wxPayApi({ orderId: res.data.orderData.id ,type:'h5'})
+     //let code_url = await wxPayApi({ orderId: res.data.orderData.id ,type:'native'})
       Toast.clear();
 
-      let imgData = await wxQRcodePay({ orderId: res.data.orderData.id })
+      let imgData = await wxQRcodePay({ orderId: res.data.orderData.id });
+      //let imgData = await API_ORDER.urlTobase64({url:code_url})
       await Dialog.confirm({
         title: '微信扫码支付',
         message: `<div><img src='${imgData.data}' /></div>`,

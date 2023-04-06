@@ -50,9 +50,11 @@ export const useUserStore = defineStore({
 
     async wxLogin(payload: Recordable = {}) {
       return new Promise<void>(async (resolve, reject) => {
-        if (!this.token && getDevicePlatform().isInWeChatApp) {
+        let wxHaslogin =  sessionStorage.getItem('wxHaslogin');
+        if (wxHaslogin!='1' && getDevicePlatform().isInWeChatApp) {
           const wxLoginRes = await API_wx.wxLogin(payload);
           if (wxLoginRes.data.token) {
+            sessionStorage.setItem('wxHaslogin','1');
             this.token = wxLoginRes.data.token;
             storage.set('token', wxLoginRes.data.token);
           }

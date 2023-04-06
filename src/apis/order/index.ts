@@ -201,6 +201,18 @@ export function wxQRcodePayApi(data?: Recordable) {
 }
 
 
+/**
+ * 获取跳转到微信公众号的链接二维码
+ */
+export function urlTobase64(data?: Recordable) {
+  return request({
+    url: `/urlTobase64`,
+    method: 'get',
+    params: data,
+  });
+}
+
+
 
 
 
@@ -224,4 +236,5 @@ export default {
   orderSet,
   orderStartOrderPeriod,
   orderStatistics,
+  urlTobase64
 };
