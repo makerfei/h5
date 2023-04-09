@@ -287,6 +287,13 @@ const routes = [
     },
   },
   {
+    path: '/newDetail',
+    component: () => import('@/views/good/newDetail.vue'),
+    meta: {
+      title: '滑动视频',
+    },
+  },
+  {
     path: '/404',
     component: () => import('@/views/exception/404.vue'),
     meta: {

@@ -15,6 +15,7 @@ import Plate from '@/components/Plate/index.vue';
 import Sku from '@/components/Sku/index.vue';
 import { ISku, IInitialSku } from '@/components/Sku/typings';
 import Coupons from './components/Coupons.vue';
+import MySwipt from './components/MySwipt.vue';
 import Reputations from './components/Reputations.vue';
 import { decimalFormat, priceIntegerFormat } from '@/utils/format';
 import { getAfterSaleTitle } from '@/model/modules/order/afterSale';
@@ -247,11 +248,14 @@ function addCartHandle() {
 
 <template>
   <div class="container">
-    <van-swipe :autoplay="3000" class="swiper">
-      <van-swipe-item v-for="item in picList" :key="item.id" class="swiper-item">
-        <van-image class="swiper-item-img" fit="contain" :src="item.pic" alt="" />
-      </van-swipe-item>
-    </van-swipe>
+
+
+
+    <MySwipt :picList="picList"   ></MySwipt>
+   
+
+
+
     <div class="section">
       <div class="price">
         <div class="price-hd">
@@ -326,16 +330,7 @@ function addCartHandle() {
   background: #fff;
 }
 
-.swiper {
-  width: 100%;
-  height: 375px;
 
-  &-item,
-  &-item-img {
-    width: 100%;
-    height: 100%;
-  }
-}
 
 .price {
   margin-top: 10px;

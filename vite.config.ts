@@ -53,8 +53,8 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: Number(env.VITE_PORT),
       proxy: {
         '/api': {
-          target: 'http://192.168.0.101',
-          //  target: 'http://mgdg.shop',
+          //target: 'http://192.168.0.101',
+            target: 'http://mgdg.shop',
           changeOrigin: true,
           secure: false,
           // rewrite: (path) => path.replace(/^\/dev-api/, ''),
