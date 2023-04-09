@@ -425,7 +425,6 @@ function addCartHandle() {
 .goods-content {
   box-sizing: border-box;
   background: #fff;
-  padding: 0 10px;
   padding-top: 10px;
   overflow: hidden;
   color: var(--color-gray-8);
