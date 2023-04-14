@@ -294,6 +294,13 @@ const routes = [
     },
   },
   {
+    path: '/kefu',
+    component: () => import('@/views/kefu/Home.vue'),
+    meta: {
+      title: '客服',
+    },
+  },
+  {
     path: '/404',
     component: () => import('@/views/exception/404.vue'),
     meta: {
