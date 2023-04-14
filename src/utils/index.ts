@@ -206,6 +206,12 @@ export function getDevicePlatform(): Record<string, boolean> {
   const isInWeChatApp = /micromessenger/i.test(ua); // 是否微信内打开
   const isInMiniProgram = /miniProgram/i.test(ua); // 是否小程序内打开
   const isInWeChatDevTools = /wechatdevtools/i.test(ua); // 是否微信开发者工具内打开
+  const isIosApp = (window as any).webkit?.messageHandlers?.isApp&&(window as any).webkit?.messageHandlers?.isApp.isApp()==="ios" ||false
+  const isApp = (window as any).isApp&&(window as any).isApp() ||false
+  const isAndroidApp = (window as any).isApp&&(window as any).isApp()==="android" ||false
+
+
+
 
   return {
     isAndroid,
@@ -215,6 +221,9 @@ export function getDevicePlatform(): Record<string, boolean> {
     isInWeChatApp,
     isInMiniProgram,
     isInWeChatDevTools,
+    isIosApp,
+    isApp,
+    isAndroidApp
   };
 }
 
@@ -270,3 +279,5 @@ export function getAPI(code = 'api') {
       return api;
   }
 }
+
+

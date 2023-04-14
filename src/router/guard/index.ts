@@ -51,14 +51,9 @@ router.beforeEach(async (to, from, next) => {
   }
 
 
-
-
-
-
   // 需要登录
   if (to.meta.needLogin && !token) {
     const redirect = to.path || '/';
-
     next({
       path: '/login',
       query: {

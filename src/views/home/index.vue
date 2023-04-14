@@ -10,7 +10,7 @@ import { useRouter } from 'vue-router';
 import API_GOODS from '@/apis/goods';
 import API_BANNER from '@/apis/banner';
 import IMAGE_LIST_EMPTY from '@/assets/images/empty/good.png';
-import { wxShare } from '@/utils/index';
+import { wxShare ,getDevicePlatform} from '@/utils/index';
 import { getQueryString } from '@/utils/index'
 import { useUserStoreWithOut } from '@/store/modules/user';
 
@@ -145,7 +145,9 @@ function onGoodClicked(id: number) {
       </van-list>
     </div>
     <!-- 底部导航栏 -->
-    <div class="beian"> <a href="https://beian.miit.gov.cn/" target="_blank">鄂ICP备2023004422号-1</a> </div>
+    <div class="beian"  v-if="!getDevicePlatform().isApp"> <a href="https://beian.miit.gov.cn/" target="_blank">鄂ICP备2023004422号-1</a> </div>
+    <div><a href="http://192.168.0.104:2022">-----</a></div>
+    
     <Tabbar />
   </div>
 </template>
