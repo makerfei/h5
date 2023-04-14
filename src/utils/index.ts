@@ -111,18 +111,18 @@ export async function wxQRcodePay({ orderId }) {
 
 
 //通过订单的维度生成微信支付信息支付的信息
-let getWxjaspiInfoByOrder = ({ orderId, type,openid='' }) => {
-  return getWxjaspiInfoByOrderApi({ orderId, type ,openid})
+let getWxjaspiInfoByOrder = ({ orderId, type, openid = '' }) => {
+  return getWxjaspiInfoByOrderApi({ orderId, type, openid })
 }
 
 // 订单维度 进行微信支付   微信内部支付
-export function wxPayApi({ orderId, type='wx',openid='' }): any {
+export function wxPayApi({ orderId, type = 'wx', openid = '' }): any {
   return new Promise<void>(async (resolve: any, reject: any) => {
     //订单生成微信jsap支付信息
-    let { data: { appId, nonceStr, timeStamp, paySign, signType, packageData, h5_url,code_url } } = await getWxjaspiInfoByOrder({ orderId, type ,openid}) as any
-    if(code_url){
+    let { data: { appId, nonceStr, timeStamp, paySign, signType, packageData, h5_url, code_url } } = await getWxjaspiInfoByOrder({ orderId, type, openid }) as any
+    if (code_url) {
       resolve(code_url)
-    }else if (h5_url) {
+    } else if (h5_url) {
       window.location.href = h5_url;
       resolve(true)
     } else {
@@ -143,13 +143,13 @@ export function wxPayApi({ orderId, type='wx',openid='' }): any {
           signType: signType, //  签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
           paySign: paySign, // 支付签名
           success: function (res) {
-            resolve(res||true)
+            resolve(res || true)
           },
           cancel: function (res) {
-            resolve(res||true)
+            resolve(res || true)
           },
           fail: function (res) {
-            resolve(res||true)
+            resolve(res || true)
           }
         });
       });
@@ -198,6 +198,7 @@ export function getURLParameters(url: string) {
 export function getDevicePlatform(): Record<string, boolean> {
   const ua = navigator.userAgent;
   const platform = navigator.platform;
+  let isAppRes = (window as any).isApp && (window as any).isApp()
 
   const isAndroid = /android/i.test(ua);
   const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
@@ -206,11 +207,9 @@ export function getDevicePlatform(): Record<string, boolean> {
   const isInWeChatApp = /micromessenger/i.test(ua); // 是否微信内打开
   const isInMiniProgram = /miniProgram/i.test(ua); // 是否小程序内打开
   const isInWeChatDevTools = /wechatdevtools/i.test(ua); // 是否微信开发者工具内打开
-  const isIosApp = (window as any).webkit?.messageHandlers?.isApp&&(window as any).webkit?.messageHandlers?.isApp.isApp()==="ios" ||false
-  const isApp = (window as any).isApp&&(window as any).isApp() ||false
-  const isAndroidApp = (window as any).isApp&&(window as any).isApp()==="android" ||false
-
-
+  const isIosApp = isAppRes === "ios" ? true : false;
+  const isApp = isAppRes ? true : false;
+  const isAndroidApp = isAppRes === "android" ? true : false;
 
 
   return {
@@ -265,10 +264,10 @@ export function getEnv() {
  */
 export function getAPI(code = 'api') {
   const host: string = import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host;
-  const basePath =  '/api';
-  const protocol = location.protocol ==="file:"?"https:":location.protocol;
+  const basePath = '/api';
+  const protocol = location.protocol === "file:" ? "https:" : location.protocol;
   const api = `${protocol}//${host}${basePath}`; // 基础接口
-  
+
 
   switch (code) {
     case 'host':

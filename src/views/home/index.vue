@@ -146,8 +146,6 @@ function onGoodClicked(id: number) {
     </div>
     <!-- 底部导航栏 -->
     <div class="beian"  v-if="!getDevicePlatform().isApp"> <a href="https://beian.miit.gov.cn/" target="_blank">鄂ICP备2023004422号-1</a> </div>
-    <div><a href="http://192.168.0.104:2022">-----</a></div>
-    
     <Tabbar />
   </div>
 </template>
