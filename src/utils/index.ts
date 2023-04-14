@@ -256,9 +256,9 @@ export function getEnv() {
  */
 export function getAPI(code = 'api') {
   const host: string = import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host;
-  const origin = `${host}`;
-  const basePath = import.meta.env.PROD ? '/api' : '/api';
-  const api = `${location.protocol}//${origin}${basePath}`; // 基础接口
+  const basePath =  '/api';
+  const protocol = location.protocol ==="file:"?"https:":location.protocol;
+  const api = `${protocol}//${host}${basePath}`; // 基础接口
   
 
   switch (code) {

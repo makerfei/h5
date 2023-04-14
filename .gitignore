@@ -2,6 +2,9 @@
 node_modules
 dist
 .eslintcache
+upload.js
+yarn.lock
+app.zip
 
 
 # local env files
