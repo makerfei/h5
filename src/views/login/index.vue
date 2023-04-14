@@ -42,7 +42,7 @@ function goPage(path: string) {
 }
 function goLinkLogin() {
   sessionStorage.setItem('wxHaslogin','0');
-  window.location.href =`${location.protocol}//`+ (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/main/snsapi_userinfo'
+  window.location.href = (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/main/snsapi_userinfo'
 }
 
 

@@ -32,8 +32,8 @@ onMounted(async () => {
   wxShare({
     title: '街道购',
     desc: '美国进口商务平台',
-    link:`${location.protocol}//`+ (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+`/api/shortlink/main/snsapi_userinfo`,
-    imgUrl: `${location.protocol}//`+(import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+'/logo.jpg'
+    link: (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+`/api/shortlink/main/snsapi_userinfo`,
+    imgUrl: (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+'/logo.jpg'
   });
 });
 
@@ -145,6 +145,7 @@ function onGoodClicked(id: number) {
       </van-list>
     </div>
     <!-- 底部导航栏 -->
+    <div class="beian"> <a href="https://beian.miit.gov.cn/" target="_blank">鄂ICP备2023004422号-1</a> </div>
     <Tabbar />
   </div>
 </template>
@@ -275,5 +276,14 @@ function onGoodClicked(id: number) {
       }
     }
   }
+}
+.beian{
+  text-align: center;
+  font-size: 10px;
+  color: aliceblue;
+  >a{
+    color: #aaaaaa;
+  }
+  padding-bottom: 20px;
 }
 </style>
