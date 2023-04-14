@@ -56,7 +56,7 @@ async function toPay(item: Recordable) {
 
 function onConcatService(_item: Recordable) {
   //Toast('未开放：客服');
-  window.open( (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/wx/kf')
+  router.push({ path: '/kefu' });
 }
 
 function onOrderCancel(item: Recordable) {

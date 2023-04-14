@@ -105,7 +105,7 @@ async function onOrderPay(item: any) {
 
 function onConcatService(_orderId: number) {
   //Toast('未开放：客服');
-  window.open((import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/wx/kf')
+  router.push({ path: '/kefu' });
 }
 
 function onOrderDelivery(orderId: number) {
