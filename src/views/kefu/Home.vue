@@ -46,6 +46,9 @@ import io from "socket.io-client";
 import JSEncrypt from 'jsencrypt';
 let encryptor = new JSEncrypt();
 import axios from "axios"
+
+import { getDevicePlatform } from '@/utils';
+
 export default {
 
     data() {
@@ -74,7 +77,7 @@ export default {
     methods: {
 
         reload() {
-            window.location.reload()
+            this.$router.replace({ path: '/comment' });
         },
 
         into() {
@@ -85,6 +88,7 @@ export default {
             });
             //访问注册
             this.socket.on("visitReturn", (data) => {
+              
                 this.user = JSON.parse(data[0].data)
             });
 
@@ -117,12 +121,13 @@ export default {
 
             //错误接收
             this.socket.on("error", (data) => {
-                window.location.href ="http://mgdg.shop:3030/public/chat.html#/comment"
+                this.$router.replace({ path: '/comment' });
                 this.$toast(data[0].message);
             });
 
             //离线处理
             this.socket.on("Offline", (data) => {
+              
                 this.$toast(data[0].message);
                 this.allowSession = false;
                 let obj = { sendType: 4, sendPeople: 'notice', message: data[0].message }

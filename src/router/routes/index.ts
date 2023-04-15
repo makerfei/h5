@@ -301,6 +301,13 @@ const routes = [
     },
   },
   {
+    path: '/comment',
+    component: () => import('@/views/kefu/comment.vue'),
+    meta: {
+      title: '留言',
+    },
+  },
+  {
     path: '/404',
     component: () => import('@/views/exception/404.vue'),
     meta: {

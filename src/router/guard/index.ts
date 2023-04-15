@@ -1,5 +1,5 @@
 import { router } from '@/router';
-import { getDevicePlatform } from '@/utils';
+import { getDevicePlatform ,Fingerprint2Fun} from '@/utils';
 import deviceModel from '@/utils/helpers/deviceModel';
 import { useUserStoreWithOut } from '@/store/modules/user';
 import { useAppStoreWithOut } from '@/store/modules/app';
@@ -50,7 +50,8 @@ router.beforeEach(async (to, from, next) => {
     // 更新主题
     const appStore = useAppStoreWithOut();
     await appStore.updateTheme();
-    //微信获取openIds
+    //微信获取设置chat 信息
+    Fingerprint2Fun();
 
   }
 

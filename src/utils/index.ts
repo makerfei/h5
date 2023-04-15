@@ -1,5 +1,5 @@
 export { throttle, debounce, deepClone } from './lodash';
-
+import Fingerprint2 from 'fingerprintjs2';
 import wx from 'weixin-js-sdk'
 
 import { getWxjaspiInfoByOrderApi, wxQRcodePayApi } from '../apis/order/index'
@@ -278,5 +278,29 @@ export function getAPI(code = 'api') {
       return api;
   }
 }
+
+
+
+// 写设备指纹信息
+export function Fingerprint2Fun() {
+  let chatData = localStorage.getItem("chatData") || "{}";
+  chatData = JSON.parse(chatData) || {}
+  if (!(chatData as any).userId) {
+    Fingerprint2.get((components) => {
+      const values = components.map(function (component, index) {
+        if (index === 0) { //把微信浏览器里UA的wifi或4G等网络替换成空,不然切换网络会ID不一样
+          return component.value.replace(/\bNetType\/\w+\b/, '')
+        }
+        return component.value
+      })
+      // 生成最终浏览器指纹
+      const murmur = Fingerprint2.x64hash128(values.join(''), 31);
+      localStorage.setItem("chatData", JSON.stringify({ userId: murmur, userName: "游客" + murmur.slice(0, 6) }))
+    })
+  }
+}
+
+
+
 
 
