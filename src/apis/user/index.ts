@@ -200,6 +200,29 @@ export function wxShare(data?: any):any {
 }
 
 
+
+/**
+ * 提交留言
+ */
+export function commentSelectById(data?: any):any {
+  return request({
+    url: `/commentSelectById`,
+    method: 'post',
+    data: data,
+  });
+}
+
+/**
+ * 获取留言
+ */
+export function commentInsert(data?: any):any {
+  return request({
+    url: `/commentInsert`,
+    method: 'post',
+    data: data,
+  });
+}
+
 export default {
   userAmount,
   userCashLog,
@@ -220,5 +243,7 @@ export default {
   userShoppingAddressDetail,
   userShoppingAddressList,
   userShoppingAddressUpdate,
-  wxShare
+  wxShare,
+  commentSelectById,
+  commentInsert
 };

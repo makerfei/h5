@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node upload",
+    "build:dev": "vite build --mode dev",
     "build:test": "vite build --mode test",
     "preview": "vite preview",
     "lint:eslint": "eslint --cache --max-warnings 0  \"{src,mock}/**/*.{vue,js,jsx,ts,tsx}\" --fix",

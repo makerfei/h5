@@ -13,12 +13,11 @@
                     {{ messageTip }}
                 </div>
                 <van-rate v-model="rateValue" allow-half class="messageRate"></van-rate>
-                <textarea v-model="customerMessage" maxlength="200" id="remark"  class="textarea"></textarea>
-                
-                
+                <textarea v-model="customerMessage" maxlength="200" id="remark" class="textarea"></textarea>
+
+
                 <div class="submitDiv" style="margin-top: 10px">
-                    <div class="submitBtn" 
-                           v-on:click="sumbitMessage">
+                    <div class="submitBtn" v-on:click="sumbitMessage">
                         提交
                     </div>
                 </div>
@@ -33,8 +32,7 @@
                         <div class="messageState" v-else-if="item.State == 2" v-on:click="item.State = 1">
                             ∧收起
                         </div>
-                        <div class="messageState"  v-else
-                            v-on:click="seeMessageDetail(item)">
+                        <div class="messageState" v-else v-on:click="seeMessageDetail(item)">
                             查看详情
                         </div>
                     </div>
@@ -50,94 +48,88 @@
 
 
 <script>
-    import axios from 'axios';
-    export default {
-        name: 'LeaveWord',
-        props: {
-        },
-        data() {
-            return {
-                messageType: true,
-                messageTip: "如需帮助，请留言，我们将尽快联系并解决您的问题",
-                rateValue: 10,
-                customerMessage: '',
-                messageList: []
-            }
-        },
-        methods: {
-            //留言与留言记录的切换
-            changeMessageType(flat) {
-                this.messageType = flat;
-                if (!flat) {
-                    let params = {
-                        commentId: JSON.parse(localStorage.getItem('chatData')).userId ,
-                    }
-                    console.log(params)
-                    axios({
-                        method: 'post',
-                        url: '/api/commentSelectById',
-                        data: params
-                    }).then((response) => {
-                        if (response.data.code===0) {
-                            this.messageList = response.data.data;
+import API_USER from '@/apis/user';
+export default {
+    name: 'LeaveWord',
+    props: {
+    },
+    data() {
+        return {
+            messageType: true,
+            messageTip: "如需帮助，请留言，我们将尽快联系并解决您的问题",
+            rateValue: 10,
+            customerMessage: '',
+            messageList: []
+        }
+    },
+    methods: {
+        //留言与留言记录的切换
+        changeMessageType(flat) {
+            this.messageType = flat;
+            if (!flat) {
+                let params = {
+                    commentId: JSON.parse(localStorage.getItem('chatData')).userId,
+                }
+                console.log(params)
+                API_USER.commentSelectById( params)
+                    .then(({ data, code }) => {
+                        if (code === 0) {
+                            this.messageList = data;
                         } else {
                             this.$toast("获取失败")
                         }
                     })
-                }
-            },
+            }
+        },
 
-            //提交留言
-            sumbitMessage() {
-                let params = {
-                    commentId:  JSON.parse(localStorage.getItem('chatData')).userId ,
-                    commentContent: this.customerMessage,
-                    commentGrade: this.rateValue,
-                    commentTime: this.getNowTime()
-                }
-                console.log(params)
-                axios({
-                    method: 'post',
-                    url: '/api/commentInsert',
-                    data: params
-                }).then((response) => {
-                    if (response.data.code===0) {
+        //提交留言
+        sumbitMessage() {
+            let params = {
+                commentId: JSON.parse(localStorage.getItem('chatData')).userId,
+                commentContent: this.customerMessage,
+                commentGrade: this.rateValue,
+                commentTime: this.getNowTime()
+            }
+
+            API_USER.commentInsert( params )
+                .then(({ data, code }) => {
+                    if (code === 0) {
                         this.$toast("提交成功")
                         this.customerMessage = "";
                     } else {
                         this.$toast("提交失败")
                     }
                 })
-            },
+        },
 
-            //获取当前时间
-            getNowTime() {
-                var date = new Date();
-                var year = date.getFullYear();
-                var month = date.getMonth() + 1;
-                var day = date.getDate();
-                var hour = date.getHours();
-                var minute = date.getMinutes();
-                var second = date.getSeconds();
-                var time = year + '-' + this.addZero(month) + '-' + this.addZero(day) + ' ' + this.addZero(hour) + ':' + this.addZero(minute) + ':' + this.addZero(second);
-                return time;
-            },
-            //小于10的拼接上0字符串
-            addZero(s) {
-                return s < 10 ? ('0' + s) : s;
-            },
+        //获取当前时间
+        getNowTime() {
+            var date = new Date();
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            var hour = date.getHours();
+            var minute = date.getMinutes();
+            var second = date.getSeconds();
+            var time = year + '-' + this.addZero(month) + '-' + this.addZero(day) + ' ' + this.addZero(hour) + ':' + this.addZero(minute) + ':' + this.addZero(second);
+            return time;
+        },
+        //小于10的拼接上0字符串
+        addZero(s) {
+            return s < 10 ? ('0' + s) : s;
+        },
 
-            seeMessageDetail(message) {
-                message.State = 2;
-            },
-        }
-       
-
+        seeMessageDetail(message) {
+            message.State = 2;
+        },
     }
+
+
+}
 </script>
 
 <style scoped>
-   .commentBg{
+.commentBg {
     width: 100%;
     background: #fafafa;
 }
@@ -152,6 +144,7 @@
     text-align: center;
     margin: 0 auto;
 }
+
 .commentTitle {
     height: 40px;
     width: 100%;
@@ -162,7 +155,8 @@
     display: flex;
 
 }
-.messageRate{
+
+.messageRate {
     transform: scale(1.5);
     margin-top: 20px;
     margin-bottom: 20px;
@@ -188,7 +182,7 @@
     color: #8A9699;
 }
 
-.messageSub{
+.messageSub {
     text-align: center;
     margin-top: 10px;
     padding: 5px 15px;
@@ -219,14 +213,14 @@
 .submitDiv {
     width: 100%;
     padding-bottom: 20px;
-  
+
 }
 
 .submitBtn {
     width: 85%;
     height: 35px;
     color: #fff;
-  
+
     margin: 0 auto;
     text-align: center;
     line-height: 35px;
@@ -273,7 +267,7 @@
     margin-right: 10px;
     display: -webkit-box;
     text-align: left;
-    margin-top:10px;
+    margin-top: 10px;
     width: 75%;
 }
 
@@ -285,9 +279,8 @@
 }
 
 @media screen and (min-width: 650px) {
-    .showComment{
+    .showComment {
         width: 35%;
     }
 }
-
 </style>

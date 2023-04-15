@@ -47,7 +47,7 @@ import JSEncrypt from 'jsencrypt';
 let encryptor = new JSEncrypt();
 import axios from "axios"
 
-import { getDevicePlatform } from '@/utils';
+import { getDevicePlatform ,getAPI} from '@/utils';
 
 export default {
 
@@ -70,7 +70,7 @@ export default {
     
     mounted() {
         this.socket&&this.socket?.close();
-        this.socket =io('http://124.223.116.100:3030'),
+        this.socket =io(getAPI().replace('/api','')),
         window.socket =  this.socket;
         this.into();
     },
@@ -88,8 +88,7 @@ export default {
             });
             //访问注册
             this.socket.on("visitReturn", (data) => {
-              
-                this.user = JSON.parse(data[0].data)
+               // this.user = JSON.parse(data[0].data)
             });
 
             //连接客服成功通知
@@ -179,6 +178,7 @@ export default {
 
             chatData = JSON.parse(chatData) || {}
             this.user = chatData;
+            
             if (!chatData.userId) {
 
                 //获取浏览器指纹并发送初始数据
@@ -203,12 +203,12 @@ export default {
                 this.socket.emit("toLabor", this.user);
             }
 
-            this.socket.emit("getPublicKey");
-            //接收公钥
-            this.socket.on("returnPublicKey", (data) => {
-                let publicKey = JSON.stringify(data[0].data).replace(/\\r\\n/g, '');
-                encryptor.setPublicKey(publicKey);
-            });
+            // this.socket.emit("getPublicKey");
+            // //接收公钥
+            // this.socket.on("returnPublicKey", (data) => {
+            //     let publicKey = JSON.stringify(data[0].data).replace(/\\r\\n/g, '');
+            //     encryptor.setPublicKey(publicKey);
+            // });
             //设置默认加载信息
             //  this.messageList.push(this.$store.state.robot[0])
 
