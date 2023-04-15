@@ -23,7 +23,7 @@ import { getAfterSaleTitle } from '@/model/modules/order/afterSale';
 import { useOrderStore } from '@/store/modules/order';
 import { useThrottleFn } from '@vueuse/core';
 import { usePage } from '@/hooks/shared/usePage';
-import { wxShare } from '@/utils/index';
+import { wxShare,getAPI } from '@/utils/index';
 import { getQueryString } from '@/utils/index'
 import { useUserStoreWithOut } from '@/store/modules/user';
 
@@ -91,7 +91,7 @@ function getGoodsDetail() {
       title: unref(basicInfo).name,
       desc: unref(basicInfo).characteristic,
       imgUrl: unref(basicInfo).pic,
-      link: (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+`/api/shortlink/goods/${unref(basicInfo).id}`
+      link: getAPI()+`/shortlink/goods/${unref(basicInfo).id}`
     });
 
     // 商品已下架

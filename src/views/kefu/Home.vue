@@ -84,6 +84,7 @@ export default {
             this.initialization();
             //错误通知返回
             this.socket.on("error", (data) => {
+                this.$router.replace({ path: '/comment' });
                 this.$toast(data[0].message);
             });
             //访问注册

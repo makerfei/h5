@@ -7,7 +7,7 @@ import { loginProviderType } from '@/constants/modules/user';
 import { isMobile } from '@/utils/validate';
 import deviceId from '@/utils/helpers/deviceId';
 import deviceModel from '@/utils/helpers/deviceModel';
-import { getDevicePlatform } from '@/utils';
+import { getDevicePlatform ,getAPI} from '@/utils';
 import { useUserStore } from '@/store/modules/user';
 import { useSmsCode } from '@/hooks/shared/useSmsCode';
 
@@ -42,7 +42,7 @@ function goPage(path: string) {
 }
 function goLinkLogin() {
   sessionStorage.setItem('wxHaslogin','0');
-  window.location.href = (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+ '/api/shortlink/main/snsapi_userinfo'
+  window.location.href =getAPI()+ '/shortlink/main/snsapi_userinfo'
 }
 
 

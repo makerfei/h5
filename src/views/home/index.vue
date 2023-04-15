@@ -10,12 +10,12 @@ import { useRouter } from 'vue-router';
 import API_GOODS from '@/apis/goods';
 import API_BANNER from '@/apis/banner';
 import IMAGE_LIST_EMPTY from '@/assets/images/empty/good.png';
-import { wxShare ,getDevicePlatform} from '@/utils/index';
+import { wxShare, getDevicePlatform, getAPI } from '@/utils/index';
 import { getQueryString } from '@/utils/index'
 import { useUserStoreWithOut } from '@/store/modules/user';
 
 
- 
+
 onMounted(async () => {
 
   //微信获取openIds
@@ -32,8 +32,8 @@ onMounted(async () => {
   wxShare({
     title: '街道购',
     desc: '美国进口商务平台',
-    link: (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+`/api/shortlink/main/snsapi_userinfo`,
-    imgUrl: (import.meta.env.PROD ? import.meta.env.VITE_APP_API_HOST : location.host)+'/logo.jpg'
+    link: getAPI() + `/api/shortlink/main/snsapi_userinfo`,
+    imgUrl: getAPI().replace('/api', "") + '/logo.jpg'
   });
 });
 
@@ -145,7 +145,8 @@ function onGoodClicked(id: number) {
       </van-list>
     </div>
     <!-- 底部导航栏 -->
-    <div class="beian"  v-if="!getDevicePlatform().isApp"> <a href="https://beian.miit.gov.cn/" target="_blank">鄂ICP备2023004422号-1</a> </div>
+    <div class="beian" v-if="!getDevicePlatform().isApp"> <a href="https://beian.miit.gov.cn/"
+        target="_blank">鄂ICP备2023004422号-1</a> </div>
     <Tabbar />
   </div>
 </template>
@@ -277,13 +278,15 @@ function onGoodClicked(id: number) {
     }
   }
 }
-.beian{
+
+.beian {
   text-align: center;
   font-size: 10px;
   color: aliceblue;
-  >a{
+
+  >a {
     color: #aaaaaa;
   }
+
   padding-bottom: 20px;
-}
-</style>
+}</style>
