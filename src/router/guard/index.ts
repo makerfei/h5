@@ -8,6 +8,10 @@ import { useAppStoreWithOut } from '@/store/modules/app';
 let appLoadedFlag: boolean; // 应用窗口加载标记
 
 router.beforeEach(async (to, from, next) => {
+
+
+  (window as any).socket && (window as any).socket.close();
+
   console.log('[route]', from.path, to.path);
   // add route title
   const title = to.meta?.title as string | undefined;
@@ -47,7 +51,7 @@ router.beforeEach(async (to, from, next) => {
     const appStore = useAppStoreWithOut();
     await appStore.updateTheme();
     //微信获取openIds
-   
+
   }
 
 

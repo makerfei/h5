@@ -1,66 +1,257 @@
 <template>
     <div class="chat_window">
+        <div class="seemore" v-if="!lastSession" @click="selectMessage">查看更多</div>
+        <ul class="messages" id="RightCont">
 
-        <ul class="messages">
-            <li class="message left appeared">
-                <div class="avatar"></div>
-                <div class="text_wrapper">
-                    <div class="text">Hello Philip! :)</div>
-                </div>
-            </li>
-            <li class="message right appeared">
-                <div class="avatar"></div>
-                <div class="text_wrapper">
-                    <div class="text">Hi Sandy! How are you?</div>
-                </div>
-            </li>
-            <li class="message left appeared">
-                <div class="avatar"></div>
-                <div class="text_wrapper">
-                    <div class="text">I'm fine, thank you!</div>
-                </div>
-            </li>
-            <li class="message right appeared">
-                <div class="avatar"></div>
-                <div class="text_wrapper">
-                    <div class="text">nihao</div>
-                </div>
+            <li :class="`message ${item.sendPeople === 'me' ? 'right' : 'left'} appeared`" :key="i"
+                v-for="(item, i) in messageList">
+
+                <template v-if="item.sendType === 1">
+                    <div class="avatar"></div>
+                    <div class="text_wrapper">
+                        <div class="text">{{ item.message }}</div>
+                    </div>
+                </template>
+
+                <template v-if="item.sendType === 3">
+                    <div class="text_wrapper">
+                        <img :src="item.message" />
+                    </div>
+                </template>
+
+
+                <template v-if="item.sendType === 4">
+                    <div class="seemore">
+                        {{ item.message }}
+                    </div>
+                </template>
             </li>
         </ul>
         <div class="bottom_wrapper clearfix">
             <div class="message_input_wrapper">
-                <textarea class="message_input" maxlength="50" placeholder="Type your message here..." />
+                <textarea class="message_input" v-on:focus="EmoteShow = false" id="dope" v-model="sendData" maxlength="50"
+                    :placeholder="allowSession ? '请输入会话内容' : '当前客服已离线'" v-on:keyup.enter="enterSend" />
             </div>
-            <div class="send_message">
+            <div class="send_message" v-on:click="allowSession ? sendMessage(sendData, 1) : reload()">
                 <div class="icon"></div>
-                <div class="text">Send</div>
+                <div class="text">{{ allowSession ? '发送' : '重找客服' }}</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-
+import Fingerprint2 from 'fingerprintjs2';
+import io from "socket.io-client";
+import JSEncrypt from 'jsencrypt';
+let encryptor = new JSEncrypt();
+import axios from "axios"
 export default {
+
     data() {
-        return {}
+        return {
+            socket:"",
+            EmoteShow: false,
+            sendData: '',
+            allowSession: false,
+            message: '',
+            user: {},
+            messageList: [],
+            lastSession: false
+        }
     },
 
+    beforeDestroy () {
+        socket.close()
+    },
+    
     mounted() {
-        window.addEventListener("scroll", this.handleScroll, true);
-    },
-
-    beforeDestroy() {
-        window.removeEventListener("scroll", this.handleScroll, true);
+        this.socket&&this.socket?.close();
+        this.socket =io('http://124.223.116.100:3030'),
+        window.socket =  this.socket;
+        this.into();
     },
     methods: {
-        handleScroll() {
-            window.scroll(0, 0);
+
+        reload() {
+            window.location.reload()
         },
+
+        into() {
+            this.initialization();
+            //错误通知返回
+            this.socket.on("error", (data) => {
+                this.$toast(data[0].message);
+            });
+            //访问注册
+            this.socket.on("visitReturn", (data) => {
+                this.user = JSON.parse(data[0].data)
+            });
+
+            //连接客服成功通知
+            this.socket.on("linkServiceSuccess", (data) => {
+                this.socketRoom = data[0].data.socketRoom;
+                this.$toast(data[0].data.serviceName + "为您服务");
+                //数据存储到localStorage
+                this.user.socketRoom = this.socketRoom;
+                this.user.receiveId = data[0].data.receiveId;
+
+                localStorage.setItem("chatData", JSON.stringify(this.user))
+                //通知客服加入
+                this.socket.emit('userJoin', this.user);
+                this.allowSession = true;
+                //查看历史记录
+               // this.selectMessage()
+            });
+
+            //接收消息
+            this.socket.on("reviceMessage", (data) => {
+                this.message = data[0].data.message;
+                let obj = { sendType: data[0].data.sendType, sendPeople: 'other', message: data[0].data.message }
+                this.messageList.push(obj);
+                //让聊天窗口回到底部
+                this.toBottom(128);
+                //客服上线
+                this.allowSession = true;
+            });
+
+            //错误接收
+            this.socket.on("error", (data) => {
+                window.location.href ="http://mgdg.shop:3030/public/chat.html#/comment"
+                this.$toast(data[0].message);
+            });
+
+            //离线处理
+            this.socket.on("Offline", (data) => {
+                this.$toast(data[0].message);
+                this.allowSession = false;
+                let obj = { sendType: 4, sendPeople: 'notice', message: data[0].message }
+                this.messageList.push(obj)
+            });
+
+        },
+
+        selectMessage() {
+            let params = {
+                sendId: this.user.userId,
+                receiveId: this.user.receiveId
+            }
+            axios({
+                method: 'post',
+                url: 'http://124.223.116.100:3030/selectMessage',
+                data: params
+            }).then((response) => {
+                if (response.data[0].code) {
+                    let message = JSON.parse(response.data[0].data);
+
+                    for (var i = message.length - 1; i >= 0; i--) {
+                        if (message[i].sendId == this.user.userId) {
+                            let obj = { sendType: message[i].sendType, sendPeople: 'me', message: message[i].sendMessage }
+                            this.messageList.unshift(obj)
+                        } else {
+                            let obj = { sendType: message[i].sendType, sendPeople: 'other', message: message[i].sendMessage }
+                            this.messageList.unshift(obj)
+                        }
+                    }
+                    //对已经加载了消息的id记录下来
+                    let obj = { receiveId: this.receiveId }
+                    this.lastSession = true;
+
+                } else {
+                    this.lastSession = false
+                    this.$toast(response.data[0].message);
+                }
+                //让聊天窗口回到底部
+                this.toBottom(128)
+
+            })
+        },
+
+
+        initialization() {
+
+            let chatData = localStorage.getItem("chatData") || "{}";
+
+            chatData = JSON.parse(chatData) || {}
+            this.user = chatData;
+            if (!chatData.userId) {
+
+                //获取浏览器指纹并发送初始数据
+                Fingerprint2.get((components) => {
+                    const values = components.map(function (component, index) {
+                        if (index === 0) { //把微信浏览器里UA的wifi或4G等网络替换成空,不然切换网络会ID不一样
+                            return component.value.replace(/\bNetType\/\w+\b/, '')
+                        }
+                        return component.value
+                    })
+                    // 生成最终浏览器指纹
+                    const murmur = Fingerprint2.x64hash128(values.join(''), 31);
+                    this.user.userId = murmur;
+                    this.user.userName = "游客" + murmur.slice(0, 6);
+                    this.user.userState = 1;
+                    this.socket.emit("visit", this.user);
+                    this.socket.emit("toLabor", this.user);
+                })
+            } else {
+                this.user.userState = 1;
+                this.socket.emit("visit", this.user);
+                this.socket.emit("toLabor", this.user);
+            }
+
+            this.socket.emit("getPublicKey");
+            //接收公钥
+            this.socket.on("returnPublicKey", (data) => {
+                let publicKey = JSON.stringify(data[0].data).replace(/\\r\\n/g, '');
+                encryptor.setPublicKey(publicKey);
+            });
+            //设置默认加载信息
+            //  this.messageList.push(this.$store.state.robot[0])
+
+        },
+
+
+
+        sendMessage(data, sendType) {
+            //判断发送类型
+            if (sendType === 1 && this.sendData.length <= 0) {
+                this.$toast("大哥至少说点什么吧!");
+                return;
+            }
+            if (sendType === 2 && this.$route.path === '/customerChat') {
+                this.EmoteShow = !this.EmoteShow;
+            }
+            //向socket发送数据请求
+            this.user.message = data;
+            this.user.sendType = sendType;
+            this.socket.emit("sendMessage", this.user);
+            //将数据存入与这个用户的聊天信息列表
+            let obj = {}
+            obj.sendType = sendType;
+            obj.sendPeople = 'me'
+            obj.message = data;
+            this.messageList.push(obj)
+            //清空输入框
+            this.sendData = '';
+            //让聊天窗口回到底部
+            this.toBottom(128)
+        },
+
+        //回到底部
+        toBottom(time) {
+            setTimeout(() => {
+                let RightCont = document.getElementById("RightCont");
+                if (RightCont != null) {
+                    let scrollHeight2 = RightCont.scrollHeight;
+                    RightCont.scrollTop = scrollHeight2;
+                }
+            }, time);
+            clearTimeout();
+        },
+
     }
 
-
 }
+
 
 
 
@@ -73,10 +264,11 @@ export default {
 
 .messages {
     list-style: none;
-    padding: 20px 10px 10px 10px;
+    padding: 20px 10px 80px 10px;
     margin: 0;
     box-sizing: border-box;
-
+    height: 100vh;
+    overflow-y: scroll;
 }
 
 .messages .message {
@@ -99,6 +291,10 @@ export default {
 .messages .message.left .text_wrapper {
     background-color: #f5eee7;
     margin-left: 20px;
+}
+
+.messages .message.left img {
+    max-width: 200px;
 }
 
 .messages .message.left .text_wrapper::after,
@@ -249,5 +445,12 @@ export default {
     font-weight: 300;
     display: inline-block;
     line-height: 48px;
+}
+
+.seemore {
+    padding: 5px 0;
+    text-align: center;
+    font-size: 12px;
+    color: #999999;
 }
 </style>
