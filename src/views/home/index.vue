@@ -32,8 +32,8 @@ onMounted(async () => {
   wxShare({
     title: '街道购',
     desc: '美国进口商务平台',
-    link: getAPI() + `/api/shortlink/main/snsapi_userinfo`,
-    imgUrl: getAPI().replace('/api', "") + '/logo.jpg'
+    link: getAPI() + `/shortlink/main/snsapi_userinfo`,
+    imgUrl: getAPI().replace('/api', "") + '/logo.png'
   });
 });
 
