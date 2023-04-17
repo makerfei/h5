@@ -18,6 +18,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:show', 'confirm']);
 
+
 const popupStyle = {
   display: 'flex',
   'flex-direction': 'column',
@@ -44,7 +45,6 @@ const skuValue = computed((): Recordable | undefined => {
 
     return skuList.find((v) => v.propertyChildIds === propertyChildIds);
   }
-
   return undefined;
 });
 
@@ -71,6 +71,7 @@ const selectedSkuComb = computed((): ISelectedSkuComb => {
         price: unref(skuValue)?.price,
         maxPrice: unref(skuValue)?.price,
         stock: unref(skuValue)?.stores,
+        img:unref(skuValue)?.img,
       };
     } else {
       const { skuList } = props.sku;
@@ -79,6 +80,8 @@ const selectedSkuComb = computed((): ISelectedSkuComb => {
         price: skuList[0].price,
         maxPrice: skuList[skuList.length - 1].price,
         stock: props.sku.stock,
+        img: props.sku.goodInfo.pic,
+
       };
     }
   } else {
@@ -86,6 +89,7 @@ const selectedSkuComb = computed((): ISelectedSkuComb => {
       price: props.sku.price,
       maxPrice: props.sku.price,
       stock: props.sku.stock,
+      img: props.sku.goodInfo.pic,
     };
   }
 });
@@ -165,7 +169,7 @@ function onSubmit() {
     @click-overlay="onClose"
   >
     <div v-if="sku.goodInfo" class="sku-header van-hairline--bottom">
-      <van-image class="sku-header-pic" :src="sku.goodInfo.pic" fit="cover" />
+      <van-image class="sku-header-pic" :src="selectedSkuComb.img" fit="cover" />
       <div class="sku-header-good-info">
         <div class="sku-header-good-name van-multi-ellipsis--l2">{{ sku.goodInfo.name }}</div>
         <div class="sku-header-good-info-bd">

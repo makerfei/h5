@@ -25,4 +25,5 @@ export interface ISelectedSkuComb {
   price: number;
   maxPrice: number;
   stock: number;
+  img: String
 }

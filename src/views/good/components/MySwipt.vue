@@ -41,7 +41,7 @@ let picListCom = computed<Array<any>>(() => {
 })
 </script>
 <template>
-  <van-swipe :autoplay="5000" class="swiper">
+  <van-swipe  class="swiper">
 
     <van-swipe-item v-for="item in picListCom" :key="item.id" class="swiper-item">
       {{ item.coverUrls }}
