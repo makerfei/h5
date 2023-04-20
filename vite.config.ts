@@ -7,8 +7,8 @@ import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import Components from 'unplugin-vue-components/vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import legacy from '@vitejs/plugin-legacy'
 
-// 当前执行node命令时文件夹的地址（工作目录）
 const root: string = process.cwd();
 
 // 打包后静态资源的存放路径
@@ -33,6 +33,9 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
   return {
     base: './',
     plugins: [
+      legacy({
+        targets: ['defaults', 'not IE 11']
+      }),
       vue(),
       vueJsx(),
       Components({
